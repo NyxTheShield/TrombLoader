@@ -18,10 +18,10 @@ namespace TrombLoader.Class_Patches
             string path = Application.streamingAssetsPath + "/leveldata/songdata.tchamp";
             if (!File.Exists(path))
             {
-                Debug.Log("Couldnt load default tracks... could not find global data file");
+                Plugin.LogDebug("Couldnt load default tracks... could not find global data file");
                 return;
             }
-            Debug.Log("Appending Custom Tracks to default track list");
+            Plugin.LogDebug("Appending Custom Tracks to default track list");
             BinaryFormatter binaryFormatter = new BinaryFormatter();
             FileStream fileStream = File.Open(path, FileMode.Open);
             SongData songData = (SongData)binaryFormatter.Deserialize(fileStream);
@@ -40,7 +40,7 @@ namespace TrombLoader.Class_Patches
                 if (File.Exists(chartPath))
                 {
                     var customLevel = new CustomSavedLevel(chartPath);
-                    Debug.Log($"Found Custom Chart!: {customLevel.trackRef}");
+                    Plugin.LogDebug($"Found Custom Chart!: {customLevel.trackRef}");
 
                     fullTrackRefs.Add(customLevel.trackRef);
 
@@ -59,21 +59,21 @@ namespace TrombLoader.Class_Patches
                 }
                 else
                 {
-                    Debug.Log("Folder has no chart, ignoring...");
+                    Plugin.LogDebug("Folder has no chart, ignoring...");
                 }
             }
 
             GlobalVariables.data_trackrefs = fullTrackRefs.ToArray();
             GlobalVariables.data_tracktitles = fullTrackTitles.ToArray();
 
-            Debug.Log("========================================");
-            Debug.Log("Printing Full Track List:");
-            Debug.Log("========================================");
-            Debug.Log($"{"Reference",15} || {"Author",15} || {"BPM",3}");
+            Plugin.LogDebug("========================================");
+            Plugin.LogDebug("Printing Full Track List:");
+            Plugin.LogDebug("========================================");
+            Plugin.LogDebug($"{"Reference",15} || {"Author",15} || {"BPM",3}");
             int i = 0;
             foreach (var trackRef in GlobalVariables.data_trackrefs)
             {
-                Debug.Log($"{trackRef,15} || {GlobalVariables.data_tracktitles[i][3],30} || {GlobalVariables.data_tracktitles[i][7],3}");
+                Plugin.LogDebug($"{trackRef,15} || {GlobalVariables.data_tracktitles[i][3],30} || {GlobalVariables.data_tracktitles[i][7],3}");
                 i += 1;
             }
             return;
@@ -97,9 +97,9 @@ namespace TrombLoader.Class_Patches
         //Serializes a songdata into a readable json, for debugging purposes
         public static JSONNode Serialize(SongData data)
         {
-            Debug.Log("=========================================================================");
-            Debug.Log(" Serializing SongData");
-            Debug.Log("=========================================================================");
+            Plugin.LogDebug("=========================================================================");
+            Plugin.LogDebug(" Serializing SongData");
+            Plugin.LogDebug("=========================================================================");
             JSONObject jsonobject = new JSONObject();
             int num = 0;
             foreach (string text in data.data_trackrefs)
@@ -115,20 +115,20 @@ namespace TrombLoader.Class_Patches
                 jsonobject[text]["BPM"] = data.data_tracktitles[num][7];
                 jsonobject[text]["UNK1"] = data.data_tracktitles[num][8];
 
-                Debug.Log(jsonobject[text]["trackRef"]);
+                Plugin.LogDebug(jsonobject[text]["trackRef"]);
 
                 num++;
             }
-            Debug.Log("=========================================================================");
+            Plugin.LogDebug("=========================================================================");
             return jsonobject;
         }
 
         //TODO: Remove this, craft from folders instead
         public static SongData DeserializeCustomSongsAndAppendToCurrentSongData(JSONNode customSongsJson, SongData currentSongData)
         {
-            Debug.Log("=========================================================================");
-            Debug.Log(" Deserializing songlist.json");
-            Debug.Log("=========================================================================");
+            Plugin.LogDebug("=========================================================================");
+            Plugin.LogDebug(" Deserializing songlist.json");
+            Plugin.LogDebug("=========================================================================");
             List<string> trackRefs = new List<string>();
             List<List<string>> trackTitles = new List<List<string>>();
             int num = 0;
@@ -149,7 +149,7 @@ namespace TrombLoader.Class_Patches
                 trackTitles.Add(currentTrackInfo);
                 num++;
 
-                Debug.Log(value["trackRef"]);
+                Plugin.LogDebug(value["trackRef"]);
             }
 
 
@@ -177,7 +177,7 @@ namespace TrombLoader.Class_Patches
 
             currentSongData.data_trackrefs = fulltrackRefsList.ToArray();
             currentSongData.data_tracktitles = (from l in fulltrackTitles select l.ToArray()).ToArray();
-            Debug.Log("=========================================================================");
+            Plugin.LogDebug("=========================================================================");
             return currentSongData;
         }
 

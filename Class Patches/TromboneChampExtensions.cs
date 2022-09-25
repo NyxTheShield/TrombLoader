@@ -34,7 +34,7 @@ namespace TrombLoader.Class_Patches
             }
             catch
             {
-                Debug.LogError("Failed to set up custom BG");
+                Plugin.LogError("Failed to set up custom BG");
             }
 
         }
