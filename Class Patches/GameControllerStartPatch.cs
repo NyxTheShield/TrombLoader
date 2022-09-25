@@ -4,6 +4,7 @@ using System.Collections;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
+using TrombLoader.Helpers;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.PostProcessing;

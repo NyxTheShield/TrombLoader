@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using TrombLoader.Helpers;
 using UnityEngine;
 
 namespace TrombLoader.Class_Patches
@@ -81,9 +82,9 @@ namespace TrombLoader.Class_Patches
         public static void CreateMissingDirectories()
         {
             //If the custom folder doesnt exist, create it
-            if (!Directory.Exists(Globals.GetCustomContentPath()))
+            if (!Directory.Exists(Globals.GetCustomSongsPath()))
             {
-                Directory.CreateDirectory(Globals.GetCustomContentPath());
+                Directory.CreateDirectory(Globals.GetCustomSongsPath());
             }
 
             //If custom song list doesnt exist, create it
