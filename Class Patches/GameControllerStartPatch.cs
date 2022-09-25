@@ -40,11 +40,7 @@ class GameControllerStartPatch
 		__instance.scores_C = 0;
 		__instance.scores_D = 0;
 		__instance.scores_F = 0;
-		Debug.Log("NYX: Fixing Latency!!!");
-		AudioConfiguration configuration = AudioSettings.GetConfiguration();
-		configuration.dspBufferSize = 180;
-		AudioSettings.Reset(configuration);
-		Debug.Log("NYX: Set buffer size to 180!!!");
+
 		if (GlobalVariables.scene_destination == "freeplay")
 		{
 			__instance.freeplay = true;

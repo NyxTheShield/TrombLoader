@@ -20,14 +20,18 @@ namespace MyFirstPlugin
         private void Awake()
         {
             instance = this;
-            // Plugin startup logic
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
-            //tmb::UnityEngine.AudioClip.Create();
-
-
-            //StartCoroutine(GetAudioClip(gameObject.AddComponent<AudioSource>(), "D:\\Games\\SteamLibrary\\steamapps\\common\\TromboneChamp\\TromboneChamp_Data\\nyx\\megalovania\\song.ogg" ));
             var harmony = new Harmony("com.example.patch");
             harmony.PatchAll();
+            
+            //Leaving this here in case anyone wants to build this with lower audio latency
+            if (false)
+            {
+                Debug.Log("NYX: Fixing Latency!!!");
+                AudioConfiguration configuration = AudioSettings.GetConfiguration();
+                configuration.dspBufferSize = 256;
+                AudioSettings.Reset(configuration);   
+            }
         }
         
         //Load AudioClip
