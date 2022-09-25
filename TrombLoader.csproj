@@ -29,44 +29,41 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="UnityEngine.AudioModule">
-      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UnityWebRequestAssetBundleModule">
-      <HintPath>libs\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UnityWebRequestAudioModule">
-      <HintPath>libs\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UnityWebRequestModule">
-      <HintPath>libs\UnityEngine.UnityWebRequestModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UnityWebRequestWWWModule">
-      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UnityWebRequestTextureModule">
-      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\Assembly-CSharp-nstrip.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
-    </Reference>    
-  </ItemGroup>
+   <Reference Include="UnityEngine.AudioModule">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+   </Reference>
+   <Reference Include="UnityEngine.CoreModule">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+   </Reference>
+   <Reference Include="UnityEngine.UnityWebRequestAudioModule.dll">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+   </Reference>
+   <Reference Include="UnityEngine.UnityWebRequestModule.dll">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+   </Reference>
+   <Reference Include="UnityEngine.UnityWebRequestWWWModule">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+   </Reference>
+   <Reference Include="UnityEngine.UnityWebRequestTextureModule">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+   </Reference>
+   <Reference Include="UnityEngine">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.dll</HintPath>
+   </Reference>
+   <Reference Include="UnityEngine.AssetBundleModule">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+   </Reference>
+   <Reference Include="Assembly-CSharp">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\Assembly-CSharp-nstrip.dll</HintPath>
+   </Reference>
+   <Reference Include="Assembly-CSharp-firstpass">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+   </Reference>
+   <Reference Include="UnityEngine.UI">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UI.dll</HintPath>
+   </Reference>
+   <Reference Include="UnityEngine.ImageConversionModule">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+   </Reference>
+ </ItemGroup>
 </Project>
