@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace MyFirstPlugin.Helpers
+namespace TrombLoader.Helpers
 {
     /// <summary>
     /// Utility class for loading Texture2D and Sprite objects.

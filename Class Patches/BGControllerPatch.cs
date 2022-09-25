@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using HarmonyLib;
-using MyFirstPlugin.Class_Patches;
-using MyFirstPlugin.Helpers;
+using TrombLoader.Class_Patches;
+using TrombLoader.Helpers;
 using UnityEngine;
 
-namespace MyFirstPlugin;
+namespace TrombLoader;
 
 [HarmonyPatch(typeof(BGController))]
 [HarmonyPatch("setUpBGControllerRefsDelayed")]

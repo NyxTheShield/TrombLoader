@@ -3,7 +3,7 @@ using System.IO;
 using SimpleJSON;
 using UnityEngine;
 
-namespace MyFirstPlugin;
+namespace TrombLoader;
 
 public class CustomSavedLevel : SavedLevel
 {
