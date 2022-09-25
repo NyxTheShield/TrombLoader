@@ -8,12 +8,12 @@ using UnityEngine.Events;
 using UnityEngine.PostProcessing;
 using System.Security;
 using System.Security.Permissions;
-using MyFirstPlugin.Class_Patches;
+using TrombLoader.Class_Patches;
 using SimpleJSON;
 
 [assembly: SecurityPermission( System.Security.Permissions.SecurityAction.RequestMinimum, SkipVerification = true )]
 
-namespace MyFirstPlugin;
+namespace TrombLoader;
 
 
 [HarmonyPatch(typeof(GameController))]

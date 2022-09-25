@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace MyFirstPlugin.Class_Patches
+namespace TrombLoader.Class_Patches
 {
     public static class TromboneChampExtensions
     {

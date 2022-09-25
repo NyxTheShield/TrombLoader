@@ -6,7 +6,7 @@ using HarmonyLib;
 using SimpleJSON;
 using UnityEngine;
 
-namespace MyFirstPlugin;
+namespace TrombLoader;
 
 [HarmonyPatch(typeof(SaverLoader))]
 [HarmonyPatch(nameof(SaverLoader.loadLevelData))] // if possible use nameof() here

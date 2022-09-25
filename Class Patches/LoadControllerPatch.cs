@@ -3,7 +3,7 @@ using HarmonyLib;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace MyFirstPlugin;
+namespace TrombLoader;
 
 [HarmonyPatch(typeof(LoadController))]
 [HarmonyPatch("LoadGameplayAsync")]
