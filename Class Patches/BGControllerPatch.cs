@@ -1,32 +1,31 @@
-﻿using System.Collections;
-using HarmonyLib;
-using TrombLoader.Class_Patches;
+﻿using HarmonyLib;
 using TrombLoader.Helpers;
 using UnityEngine;
 
-namespace TrombLoader;
-
-[HarmonyPatch(typeof(BGController))]
-[HarmonyPatch("setUpBGControllerRefsDelayed")]
-public class BGControllerPatch
+namespace TrombLoader.Class_Patches
 {
-    //Patch to load a custom background
-
-    static void Postfix(BGController __instance)
+    [HarmonyPatch(typeof(BGController))]
+    [HarmonyPatch("setUpBGControllerRefsDelayed")]
+    public class BGControllerPatch
     {
-	    
-        var trackReference = GlobalVariables.data_trackrefs[GlobalVariables.chosen_track_index];
-        var songPath = Globals.GetCustomSongsPath() + trackReference;
-        var spritePath = songPath + "/bg.png";
-        Debug.Log("Trying to load custom background!!");
-        //string trackReference = GlobalVariables.data_trackrefs[GlobalVariables.chosen_track_index];
-        if (Globals.IsCustomTrack(trackReference))
+        //Patch to load a custom background
+
+        static void Postfix(BGController __instance)
         {
-            __instance.DisableBackground();
-            Debug.Log("Disabled Backgrounds...");
-            Debug.Log($"Trying to load Custom sprite from path: {spritePath}");
-            var sprite = ImageHelper.LoadSpriteFromFile(spritePath);
-            __instance.SetBasicBackground(sprite);
+
+            var trackReference = GlobalVariables.data_trackrefs[GlobalVariables.chosen_track_index];
+            var songPath = Globals.GetCustomSongsPath() + trackReference;
+            var spritePath = songPath + "/bg.png";
+            Debug.Log("Trying to load custom background!!");
+            //string trackReference = GlobalVariables.data_trackrefs[GlobalVariables.chosen_track_index];
+            if (Globals.IsCustomTrack(trackReference))
+            {
+                __instance.DisableBackground();
+                Debug.Log("Disabled Backgrounds...");
+                Debug.Log($"Trying to load Custom sprite from path: {spritePath}");
+                var sprite = ImageHelper.LoadSpriteFromFile(spritePath);
+                __instance.SetBasicBackground(sprite);
+            }
         }
     }
 }

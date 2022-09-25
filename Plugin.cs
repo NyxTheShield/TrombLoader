@@ -1,9 +1,8 @@
-﻿using System;
+﻿using BepInEx;
+using HarmonyLib;
+using System;
 using System.Collections;
 using System.IO;
-using BepInEx;
-using HarmonyLib;
-using SimpleJSON;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -21,17 +20,15 @@ namespace TrombLoader
         {
             instance = this;
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
-            var harmony = new Harmony("com.example.patch");
+            var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
-            
-            //Leaving this here in case anyone wants to build this with lower audio latency
-            if (false)
-            {
-                Debug.Log("NYX: Fixing Latency!!!");
-                AudioConfiguration configuration = AudioSettings.GetConfiguration();
-                configuration.dspBufferSize = 256;
-                AudioSettings.Reset(configuration);   
-            }
+
+#if DEBUG
+            Logger.LogInfo("NYX: Fixing Latency!!!");
+            AudioConfiguration configuration = AudioSettings.GetConfiguration();
+            configuration.dspBufferSize = 256;
+            AudioSettings.Reset(configuration);
+#endif
         }
         
         //Load AudioClip
