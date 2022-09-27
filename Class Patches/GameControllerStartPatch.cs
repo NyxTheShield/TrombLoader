@@ -2,6 +2,7 @@
 using SimpleJSON;
 using System.Collections;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
 using TrombLoader.Helpers;
@@ -20,7 +21,35 @@ namespace TrombLoader.Class_Patches
 		//rewrite of the original
 		static bool Prefix(GameController __instance)
 		{
-
+			//.... Dont even ask why
+			__instance.toot_keys.Add(KeyCode.Space);
+			__instance.toot_keys.Add(KeyCode.A);
+			__instance.toot_keys.Add(KeyCode.B);
+			__instance.toot_keys.Add(KeyCode.C);
+			__instance.toot_keys.Add(KeyCode.D);
+			__instance.toot_keys.Add(KeyCode.E);
+			__instance.toot_keys.Add(KeyCode.F);
+			__instance.toot_keys.Add(KeyCode.G);
+			__instance.toot_keys.Add(KeyCode.H);
+			__instance.toot_keys.Add(KeyCode.I);
+			__instance.toot_keys.Add(KeyCode.J);
+			__instance.toot_keys.Add(KeyCode.K);
+			__instance.toot_keys.Add(KeyCode.L);
+			__instance.toot_keys.Add(KeyCode.M);
+			__instance.toot_keys.Add(KeyCode.N);
+			__instance.toot_keys.Add(KeyCode.O);
+			__instance.toot_keys.Add(KeyCode.P);
+			__instance.toot_keys.Add(KeyCode.Q);
+			__instance.toot_keys.Add(KeyCode.R);
+			__instance.toot_keys.Add(KeyCode.S);
+			__instance.toot_keys.Add(KeyCode.T);
+			__instance.toot_keys.Add(KeyCode.U);
+			__instance.toot_keys.Add(KeyCode.V);
+			__instance.toot_keys.Add(KeyCode.W);
+			__instance.toot_keys.Add(KeyCode.X);
+			__instance.toot_keys.Add(KeyCode.Y);
+			__instance.toot_keys.Add(KeyCode.Z);
+			
 			__instance.latency_offset = (float)GlobalVariables.localsettings.latencyadjust * 0.001f;
 
 			Debug.Log("latency_offset: " + __instance.latency_offset);
@@ -326,7 +355,7 @@ namespace TrombLoader.Class_Patches
 
 		static void Postfix(GameController __instance)
 		{
-
+			
 		}
 
 	}
