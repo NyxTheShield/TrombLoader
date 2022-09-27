@@ -34,6 +34,7 @@ namespace TrombLoader.Class_Patches
             List<string[]> fullTrackTitles = GlobalVariables.data_tracktitles.ToList();
 
             var songs = Directory.GetDirectories(Globals.GetCustomSongsPath());
+            var index = GlobalVariables.data_trackrefs.Length;
             foreach (var songFolder in songs)
             {
                 string chartPath = songFolder + "/" + Globals.defaultChartName;
@@ -41,7 +42,7 @@ namespace TrombLoader.Class_Patches
                 {
                     var customLevel = new CustomSavedLevel(chartPath);
                     Debug.Log($"Found Custom Chart!: {customLevel.trackRef}");
-
+                    
                     fullTrackRefs.Add(customLevel.trackRef);
 
                     var aux = new List<string>();
@@ -52,10 +53,12 @@ namespace TrombLoader.Class_Patches
                     aux.Add(customLevel.genre);
                     aux.Add(customLevel.description);
                     aux.Add(customLevel.difficulty.ToString());
+                    aux.Add(customLevel.endpoint.ToString());
                     aux.Add(customLevel.tempo.ToString());
-                    aux.Add(customLevel.unk1.ToString());
+                    aux.Add(index.ToString());
 
                     fullTrackTitles.Add(aux.ToArray());
+                    index++;
                 }
                 else
                 {
@@ -69,11 +72,11 @@ namespace TrombLoader.Class_Patches
             Debug.Log("========================================");
             Debug.Log("Printing Full Track List:");
             Debug.Log("========================================");
-            Debug.Log($"{"Reference",15} || {"Author",15} || {"BPM",3}");
+            Debug.Log($"{"Reference",15} || {"Author",15} || {"Index",6}");
             int i = 0;
             foreach (var trackRef in GlobalVariables.data_trackrefs)
             {
-                Debug.Log($"{trackRef,15} || {GlobalVariables.data_tracktitles[i][3],30} || {GlobalVariables.data_tracktitles[i][7],3}");
+                Debug.Log($"{trackRef,15} || {GlobalVariables.data_tracktitles[i][3],30} || {GlobalVariables.data_tracktitles[i][9],3}");
                 i += 1;
             }
             return;
