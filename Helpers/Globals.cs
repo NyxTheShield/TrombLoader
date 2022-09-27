@@ -11,7 +11,7 @@ namespace TrombLoader.Helpers
 
         public static string GetCustomSongsPath()
         {
-            return Path.Combine(Paths.BepInExRootPath, "CustomSongs");
+            return Path.Combine(Paths.BepInExRootPath, "CustomSongs/");
         }
 
         //If there is no chart named trackReference.tmb in the streamingAssets/leveldata folder, then we are loading a custom chart

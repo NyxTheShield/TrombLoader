@@ -34,6 +34,7 @@ namespace TrombLoader.Class_Patches
             List<string[]> fullTrackTitles = GlobalVariables.data_tracktitles.ToList();
 
             var songs = Directory.GetDirectories(Globals.GetCustomSongsPath());
+            var index = GlobalVariables.data_trackrefs.Length;
             foreach (var songFolder in songs)
             {
                 string chartPath = songFolder + "/" + Globals.defaultChartName;
@@ -52,10 +53,12 @@ namespace TrombLoader.Class_Patches
                     aux.Add(customLevel.genre);
                     aux.Add(customLevel.description);
                     aux.Add(customLevel.difficulty.ToString());
+                    aux.Add(customLevel.endpoint.ToString());
                     aux.Add(customLevel.tempo.ToString());
-                    aux.Add(customLevel.unk1.ToString());
+                    aux.Add(index.ToString());
 
                     fullTrackTitles.Add(aux.ToArray());
+                    index++;
                 }
                 else
                 {
@@ -74,6 +77,7 @@ namespace TrombLoader.Class_Patches
             foreach (var trackRef in GlobalVariables.data_trackrefs)
             {
                 Plugin.LogDebug($"{trackRef,15} || {GlobalVariables.data_tracktitles[i][3],30} || {GlobalVariables.data_tracktitles[i][7],3}");
+
                 i += 1;
             }
             return;
