@@ -12,7 +12,7 @@ namespace TrombLoader.Class_Patches
         //Might be useful for the future
         static bool Prefix(LoadController __instance)
         {
-            Debug.Log("Loading Gameplay Scene!");
+            Plugin.LogDebug("Loading Gameplay Scene!");
 
 
             var customTrackReference = GlobalVariables.data_trackrefs[GlobalVariables.chosen_track_index];
@@ -20,13 +20,13 @@ namespace TrombLoader.Class_Patches
 
             if (Globals.IsCustomTrack(customTrackReference))
             {
-                Debug.Log("Loading a custom chart");
-                Plugin.instance.LoadGameplayScene();
+                Plugin.LogDebug("Loading a custom chart");
+                Plugin.Instance.LoadGameplayScene();
             }
             else
             {
-                Debug.Log("Loading a base game chart");
-                Plugin.instance.LoadGameplayScene();
+                Plugin.LogDebug("Loading a base game chart");
+                Plugin.Instance.LoadGameplayScene();
             }
 
             return false;
