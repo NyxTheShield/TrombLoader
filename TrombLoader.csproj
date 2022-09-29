@@ -71,5 +71,8 @@
    <Reference Include="UnityEngine.ImageConversionModule">
      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
    </Reference>
+   <Reference Include="UnityEngine.IMGUIModule">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+   </Reference>
  </ItemGroup>
 </Project>

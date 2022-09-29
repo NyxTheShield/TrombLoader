@@ -20,7 +20,7 @@ namespace TrombLoader.Class_Patches
             var spritePath = Path.Combine(songPath, "bg.png");
             var backgroundPath = Path.Combine(songPath, "bg.trombackground"); // comically large file extension
 
-            Debug.Log("Trying to load custom background!!");
+            Plugin.LogDebug("Trying to load custom background!!");
             //string trackReference = GlobalVariables.data_trackrefs[GlobalVariables.chosen_track_index];
             if (Globals.IsCustomTrack(trackReference))
             {
@@ -33,8 +33,8 @@ namespace TrombLoader.Class_Patches
                 else
                 {
                     __instance.DisableBackground();
-                    Debug.Log("Disabled Backgrounds...");
-                    Debug.Log($"AssetBundle loading failed. Trying to load Custom sprite from path: {spritePath}");
+                    Plugin.LogDebug("Disabled Backgrounds...");
+                    Plugin.LogDebug($"Trying to load Custom sprite from path: {spritePath}");
                     var sprite = ImageHelper.LoadSpriteFromFile(spritePath);
                     __instance.SetBasicBackground(sprite);
 

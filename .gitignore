@@ -402,3 +402,4 @@ FodyWeavers.xsd
 Folder.DotSettings.user
 MyFirstPlugin.7z
 libs
+*.patch

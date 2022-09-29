@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Logging;
 using HarmonyLib;
 using System;
 using System.Collections;
@@ -13,21 +14,18 @@ namespace TrombLoader
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     public class Plugin : BaseUnityPlugin
     {
-        public static Plugin instance;
+        public static Plugin Instance;
         public AudioClip currentClip;
         
         private void Awake()
         {
-            instance = this;
-            Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+            Instance = this;
+            LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
             var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
 
 #if DEBUG
-            Logger.LogInfo("NYX: Fixing Latency!!!");
-            AudioConfiguration configuration = AudioSettings.GetConfiguration();
-            configuration.dspBufferSize = 256;
-            AudioSettings.Reset(configuration);
+            
 #endif
         }
         
@@ -44,10 +42,10 @@ namespace TrombLoader
             }
             else 
             {
-                    AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
-                    this.currentClip = clip;
-                    Debug.Log("Loaded File:" + path);
-                    callback?.Invoke();
+                AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
+                this.currentClip = clip;
+                LogDebug("Loaded File:" + path);
+                callback?.Invoke();
             }
         }
         
@@ -66,7 +64,7 @@ namespace TrombLoader
             }
             else 
             {
-                Debug.Log("Loaded File:" + path);
+                LogDebug("Loaded File:" + path);
                 callback?.Invoke();
                 AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
                 yield return DownloadHandlerAudioClip.GetContent(www);
@@ -77,7 +75,7 @@ namespace TrombLoader
         public IEnumerator GetSpriteFromPath(string path)
         {   
             path = "file:\\\\" + Path.GetFullPath(path);
-            Debug.Log($"Web Request Texture: {path}");
+            LogDebug($"Web Request Texture: {path}");
             UnityWebRequest www = UnityWebRequestTexture.GetTexture(path);
             yield return www.SendWebRequest();
             
@@ -91,7 +89,7 @@ namespace TrombLoader
             else 
             {
                 var texture = ((DownloadHandlerTexture) www.downloadHandler).texture;
-                Debug.Log($"Got Texture!! null?:{texture == null}");
+                LogDebug($"Got Texture!! null?:{texture == null}");
                 var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
                 yield return sprite;
             }
@@ -115,5 +113,13 @@ namespace TrombLoader
         {
             SceneManager.LoadSceneAsync("gameplay", LoadSceneMode.Single);
         }
+
+        #region logging
+        internal static void LogDebug(string message) => Instance.Log(message, LogLevel.Debug);
+        internal static void LogInfo(string message) => Instance.Log(message, LogLevel.Info);
+        internal static void LogWarning(string message) => Instance.Log(message, LogLevel.Warning);
+        internal static void LogError(string message) => Instance.Log(message, LogLevel.Error);
+        private void Log(string message, LogLevel logLevel) => Logger.Log(logLevel, message);
+        #endregion
     }
 }

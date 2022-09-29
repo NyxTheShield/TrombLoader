@@ -1,4 +1,4 @@
-﻿using SimpleJSON;
+using SimpleJSON;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -52,7 +52,7 @@ namespace TrombLoader.Data
 		//For debugging, saves to a file
 		public JSONNode Serialize()
 		{
-			Debug.Log("Nyx: Serializing Chart!!");
+			Plugin.LogDebug("Nyx: Serializing Chart!!");
 			JSONObject jsonobject = new JSONObject();
 			JSONArray asArray = jsonobject["notes"].AsArray;
 			foreach (float[] array in this.savedleveldata)
@@ -133,10 +133,10 @@ namespace TrombLoader.Data
 			this.lyricstxt = new List<string>();
 			this.lyricspos = new List<float[]>();
 
-			Debug.Log("Deserializing Chart:");
+			Plugin.LogDebug("Deserializing Chart:");
 			foreach (JSONObject node in jsonObject["lyrics"].AsArray)
 			{
-				Debug.Log(node.ToString());
+				Plugin.LogDebug(node.ToString());
 				this.lyricstxt.Add(node["text"].ToString());
 				var aux = new List<float>();
 				aux.Add(node["bar"].AsFloat);

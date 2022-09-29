@@ -2,6 +2,7 @@
 using SimpleJSON;
 using System.Collections;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
 using TrombLoader.Data;
@@ -21,7 +22,35 @@ namespace TrombLoader.Class_Patches
 		//rewrite of the original
 		static bool Prefix(GameController __instance)
 		{
-
+			//.... Dont even ask why
+			__instance.toot_keys.Add(KeyCode.Space);
+			__instance.toot_keys.Add(KeyCode.A);
+			__instance.toot_keys.Add(KeyCode.B);
+			__instance.toot_keys.Add(KeyCode.C);
+			__instance.toot_keys.Add(KeyCode.D);
+			__instance.toot_keys.Add(KeyCode.E);
+			__instance.toot_keys.Add(KeyCode.F);
+			__instance.toot_keys.Add(KeyCode.G);
+			__instance.toot_keys.Add(KeyCode.H);
+			__instance.toot_keys.Add(KeyCode.I);
+			__instance.toot_keys.Add(KeyCode.J);
+			__instance.toot_keys.Add(KeyCode.K);
+			__instance.toot_keys.Add(KeyCode.L);
+			__instance.toot_keys.Add(KeyCode.M);
+			__instance.toot_keys.Add(KeyCode.N);
+			__instance.toot_keys.Add(KeyCode.O);
+			__instance.toot_keys.Add(KeyCode.P);
+			__instance.toot_keys.Add(KeyCode.Q);
+			__instance.toot_keys.Add(KeyCode.R);
+			__instance.toot_keys.Add(KeyCode.S);
+			__instance.toot_keys.Add(KeyCode.T);
+			__instance.toot_keys.Add(KeyCode.U);
+			__instance.toot_keys.Add(KeyCode.V);
+			__instance.toot_keys.Add(KeyCode.W);
+			__instance.toot_keys.Add(KeyCode.X);
+			__instance.toot_keys.Add(KeyCode.Y);
+			__instance.toot_keys.Add(KeyCode.Z);
+			
 			__instance.latency_offset = (float)GlobalVariables.localsettings.latencyadjust * 0.001f;
 
 			Debug.Log("latency_offset: " + __instance.latency_offset);
@@ -88,7 +117,7 @@ namespace TrombLoader.Class_Patches
 			}
 			if (!File.Exists(Application.dataPath + baseGameChartPath))
 			{
-				Debug.Log("Nyx: Cant load asset bundle, must be a custom song, hijacking Ball game!");
+				Plugin.LogDebug("Nyx: Cant load asset bundle, must be a custom song, hijacking Ball game!");
 				baseGameChartPath = "/StreamingAssets/trackassets/ballgame";
 				trackReference = "ballgame";
 				isCustomTrack = true;
@@ -96,10 +125,10 @@ namespace TrombLoader.Class_Patches
 			__instance.myLoadedAssetBundle = AssetBundle.LoadFromFile(Application.dataPath + baseGameChartPath);
 			if (__instance.myLoadedAssetBundle == null)
 			{
-				Debug.Log("Failed to load AssetBundle!");
+				Plugin.LogDebug("Failed to load AssetBundle!");
 				return false;
 			}
-			Debug.Log("LOADED ASSETBUNDLE: " + Application.dataPath + baseGameChartPath);
+			Plugin.LogDebug("LOADED ASSETBUNDLE: " + Application.dataPath + baseGameChartPath);
 			if (!__instance.freeplay)
 			{
 				AudioSource component = __instance.myLoadedAssetBundle.LoadAsset<GameObject>("music_" + trackReference).GetComponent<AudioSource>();
@@ -107,10 +136,10 @@ namespace TrombLoader.Class_Patches
 				__instance.musictrack.volume = component.volume;
 				if (isCustomTrack)
 				{
-					Debug.Log("Nyx: Trying to load ogg from file!");
+					Plugin.LogDebug("Nyx: Trying to load ogg from file!");
 
 					var songPath = Globals.GetCustomSongsPath() + customTrackReference + "/song.ogg";
-					IEnumerator e = Plugin.instance.GetAudioClipSync(songPath);
+					IEnumerator e = Plugin.Instance.GetAudioClipSync(songPath);
 
 					//Worst piece of code I have ever seen, but it does the job, I guess
 					//Unity has forced my hand once again
@@ -121,7 +150,7 @@ namespace TrombLoader.Class_Patches
 						{
 							if (e.Current is string)
 							{
-								Debug.LogError("Couldnt Load OGG FILE!!");
+								Plugin.LogError("Couldnt Load OGG FILE!!");
 							}
 							else
 							{
@@ -210,10 +239,10 @@ namespace TrombLoader.Class_Patches
 			__instance.mySoundAssetBundle = AssetBundle.LoadFromFile(Application.dataPath + "/StreamingAssets/soundpacks/soundpack" + array[__instance.soundset]);
 			if (__instance.mySoundAssetBundle == null)
 			{
-				Debug.Log("Failed to load sound pack AssetBundle!");
+				Plugin.LogDebug("Failed to load sound pack AssetBundle!");
 				return false;
 			}
-			Debug.Log("LOADED <<<sound pack>>> ASSETBUNDLE");
+			Plugin.LogDebug("LOADED <<<sound pack>>> ASSETBUNDLE");
 			UnityEngine.Object.Instantiate<GameObject>(__instance.mySoundAssetBundle.LoadAsset<GameObject>("soundpack" + array[__instance.soundset]), new Vector3(0f, 0f, 0f), Quaternion.identity, __instance.soundSets.transform);
 			__instance.StartCoroutine(__instance.loadSoundBundleResources());
 			__instance.puppet_human = UnityEngine.Object.Instantiate<GameObject>(__instance.playermodels[__instance.puppetnum], new Vector3(0f, 0f, 0f), Quaternion.identity, __instance.modelparent.transform);
@@ -366,7 +395,7 @@ namespace TrombLoader.Class_Patches
 
 		static void Postfix(GameController __instance)
 		{
-
+			
 		}
 
 	}
@@ -391,32 +420,32 @@ namespace TrombLoader.Class_Patches
 			}
 			if (!File.Exists(baseChartName))
 			{
-				Debug.LogError("File doesnt exist!! Try to load custom song, hijacking Ballgame!!!!!");
+				Plugin.LogError("File doesnt exist!! Try to load custom song, hijacking Ballgame!!!!!");
 				baseChartName = Application.streamingAssetsPath + "/leveldata/ballgame.tmb";
-				Debug.Log("Loading Chart:" + baseChartName);
-				Debug.Log("NYX: HERE WE HOOK OUR CUSTOM CHART!!!!!!!!!!!");
+				Plugin.LogDebug("Loading Chart:" + baseChartName);
+				Plugin.LogDebug("NYX: HERE WE HOOK OUR CUSTOM CHART!!!!!!!!!!!");
 				isCustomTrack = true;
 			}
 			if (File.Exists(baseChartName))
 			{
-				Debug.Log("found level");
+				Plugin.LogDebug("found level");
 				BinaryFormatter binaryFormatter = new BinaryFormatter();
 				FileStream fileStream = File.Open(baseChartName, FileMode.Open);
 				SavedLevel savedLevel = (SavedLevel)binaryFormatter.Deserialize(fileStream);
 				fileStream.Close();
 				if (!isCustomTrack)
 				{
-					Debug.Log("NYX: Printing Ingame Chart!!!!");
-					//Debug.Log(savedLevel.Serialize().ToString());
+					Plugin.LogDebug("NYX: Printing Ingame Chart!!!!");
+					//Plugin.LogDebug(savedLevel.Serialize().ToString());
 				}
 
 				CustomSavedLevel customLevel = new CustomSavedLevel(savedLevel);
 				if (isCustomTrack)
 				{
-					Debug.Log("Loading Chart from:" + customChartPath);
+					Plugin.LogDebug("Loading Chart from:" + customChartPath);
 					string jsonString = File.ReadAllText(customChartPath);
 					var jsonObject = JSON.Parse(jsonString);
-					Debug.Log(jsonObject.ToString());
+					Plugin.LogDebug(jsonObject.ToString());
 					customLevel.Deserialize(jsonObject);
 				}
 				__instance.bgdata.Clear();
@@ -431,7 +460,7 @@ namespace TrombLoader.Class_Patches
 
 				if (customLevel.note_color_start == null)
 				{
-					Debug.Log("no color data :-(");
+					Plugin.LogDebug("no color data :-(");
 				}
 				else
 				{
@@ -443,7 +472,7 @@ namespace TrombLoader.Class_Patches
 					__instance.col_r_2.text = __instance.note_c_end[0].ToString();
 					__instance.col_g_2.text = __instance.note_c_end[1].ToString();
 					__instance.col_b_2.text = __instance.note_c_end[2].ToString();
-					Debug.Log(__instance.col_r_1.text + __instance.col_g_1.text + __instance.col_b_1.text);
+					Plugin.LogDebug(__instance.col_r_1.text + __instance.col_g_1.text + __instance.col_b_1.text);
 				}
 				__instance.levelendpoint = customLevel.endpoint;
 				__instance.editorendpostext.text = "end: " + __instance.levelendpoint;
@@ -461,12 +490,15 @@ namespace TrombLoader.Class_Patches
 				__instance.moveTimeline(0);
 				__instance.changeTimeSig(0);
 				__instance.levelendtime = 60f / __instance.tempo * __instance.levelendpoint;
-
+				
 				BGControllerPatch.BGEffect = customLevel.backgroundMovement;
+
+				Plugin.LogDebug("level end TIME: " + __instance.levelendtime);
+				Plugin.LogDebug("Game Loaded");
 
 				return false;
 			}
-			Debug.Log("No file exists at that filename!");
+			Plugin.LogDebug("No file exists at that filename!");
 			return false;
 		}
 	}
