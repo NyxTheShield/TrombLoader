@@ -493,6 +493,9 @@ namespace TrombLoader.Class_Patches
 				
 				BGControllerPatch.BGEffect = customLevel.backgroundMovement;
 
+				var modelCam = GameObject.Find("3dModelCamera")?.GetComponent<Camera>();
+				if (modelCam != null) modelCam.clearFlags = CameraClearFlags.Depth;
+
 				Plugin.LogDebug("level end TIME: " + __instance.levelendtime);
 				Plugin.LogDebug("Game Loaded");
 
