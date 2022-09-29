@@ -9,7 +9,7 @@
     <LangVersion>latest</LangVersion>
     <YourTromboneChampInstallationPath>D:\Games\SteamLibrary\steamapps\common\TromboneChamp</YourTromboneChampInstallationPath>
   </PropertyGroup>
-	
+
   <PropertyGroup Condition="Exists('..\..\TromboneChamp_Data')">
        <TromboneChampDir>..\..</TromboneChampDir>
    </PropertyGroup>
@@ -60,7 +60,7 @@
      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
    </Reference>
    <Reference Include="Assembly-CSharp">
-     <HintPath>$(TromboneChampDir)\libs\Assembly-CSharp.dll</HintPath>
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\Assembly-CSharp-nstrip.dll</HintPath>
    </Reference>
    <Reference Include="Assembly-CSharp-firstpass">
      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
@@ -71,5 +71,5 @@
    <Reference Include="UnityEngine.ImageConversionModule">
      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
    </Reference>
-</ItemGroup>
+ </ItemGroup>
 </Project>
