@@ -4,6 +4,7 @@ using System.Collections;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
+using TrombLoader.Data;
 using TrombLoader.Helpers;
 using UnityEngine;
 using UnityEngine.Events;
@@ -140,6 +141,45 @@ namespace TrombLoader.Class_Patches
 			if (!__instance.freeplay)
 			{
 				gameObject = __instance.myLoadedAssetBundle.LoadAsset<GameObject>("BGCam_" + trackReference);
+
+                if (isCustomTrack)
+                {
+					__instance.bgcontroller.tickontempo = false;
+
+					if (File.Exists(Globals.GetCustomSongsPath() + customTrackReference + "/bg.trombackground"))
+                    {
+						var gameObjectOld = gameObject;
+						gameObject = AssetBundleHelper.LoadObjectFromAssetBundlePath<GameObject>(Globals.GetCustomSongsPath() + customTrackReference + "/bg.trombackground");
+						UnityEngine.Object.DontDestroyOnLoad(gameObject);
+
+						// very scuffed and temporary, this could probably be completely done on export
+
+						// handle foreground objects
+						while (gameObject.transform.GetChild(1).childCount < 8)
+						{
+							var fillerObject = new GameObject("Filler");
+							fillerObject.transform.SetParent(gameObject.transform.GetChild(1));
+						}
+
+						// handle two background images
+						while (gameObject.transform.GetChild(0).GetComponentsInChildren<SpriteRenderer>().Length < 2)
+						{
+							var fillerObject = new GameObject("Filler");
+							fillerObject.AddComponent<SpriteRenderer>();
+							fillerObject.transform.SetParent(gameObject.transform.GetChild(0));
+						}
+
+						// move confetti
+						gameObjectOld.transform.GetChild(2).SetParent(gameObject.transform);
+
+						var managers = gameObject.GetComponentsInChildren<TromboneEventManager>();
+						foreach (var manager in managers) manager.DeserializeAllGenericEvents();
+
+						var invoker = gameObject.AddComponent<TromboneEventInvoker>();
+						invoker.InitializeInvoker(__instance, managers);
+						UnityEngine.Object.DontDestroyOnLoad(invoker);
+					}
+				}
 			}
 			else if (__instance.freeplay)
 			{
@@ -421,8 +461,9 @@ namespace TrombLoader.Class_Patches
 				__instance.moveTimeline(0);
 				__instance.changeTimeSig(0);
 				__instance.levelendtime = 60f / __instance.tempo * __instance.levelendpoint;
-				Debug.Log("level end TIME: " + __instance.levelendtime);
-				Debug.Log("Game Loaded");
+
+				BGControllerPatch.BGEffect = customLevel.backgroundMovement;
+
 				return false;
 			}
 			Debug.Log("No file exists at that filename!");
