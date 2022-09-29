@@ -91,4 +91,21 @@ public class LevelSelectControllerAdvanceSongsPatch
     }
 }
 
+[HarmonyPatch(typeof(LevelSelectController))]
+[HarmonyPatch(nameof(LevelSelectController.Start))]
+public class LevelSelectStartPatch
+{
+    public static bool isActuallyTromboneChamp = false;
+    //This looks ugly, but saves us from using a transpiler
+    static void Prefix(LevelSelectController __instance)
+    {
+        isActuallyTromboneChamp = GlobalVariables.localsave.progression_trombone_champ;
+        GlobalVariables.localsave.progression_trombone_champ = true;
+    }
+    
+    static void Postfix(LevelSelectController __instance)
+    {
+        if (!isActuallyTromboneChamp) GlobalVariables.localsave.progression_trombone_champ = false;
+    }
+}
 
