@@ -25,10 +25,7 @@ namespace TrombLoader
             harmony.PatchAll();
 
 #if DEBUG
-            LogInfo("NYX: Fixing Latency!!!");
-            AudioConfiguration configuration = AudioSettings.GetConfiguration();
-            configuration.dspBufferSize = 256;
-            AudioSettings.Reset(configuration);
+            
 #endif
         }
         
