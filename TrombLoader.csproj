@@ -35,6 +35,12 @@
    <Reference Include="UnityEngine.CoreModule">
      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
    </Reference>
+   <Reference Include="UnityEngine.InputLegacyModule">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+   </Reference>
+   <Reference Include="UnityEngine.JSONSerializeModule">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
+   </Reference>
    <Reference Include="UnityEngine.UnityWebRequestAudioModule.dll">
      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
    </Reference>
