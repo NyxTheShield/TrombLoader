@@ -8,6 +8,7 @@ using System.Security.Permissions;
 using TrombLoader.Data;
 using TrombLoader.Helpers;
 using UnityEngine;
+using UnityEngine.Video;
 using UnityEngine.Events;
 using UnityEngine.PostProcessing;
 
@@ -207,6 +208,16 @@ namespace TrombLoader.Class_Patches
 						var invoker = gameObject.AddComponent<TromboneEventInvoker>();
 						invoker.InitializeInvoker(__instance, managers);
 						UnityEngine.Object.DontDestroyOnLoad(invoker);
+
+						foreach (var videoPlayer in gameObject.GetComponentsInChildren<VideoPlayer>())
+                        {
+							if (videoPlayer.url != null && videoPlayer.url.Contains("SERIALIZED_OUTSIDE_BUNDLE"))
+							{
+								var videoName = videoPlayer.url.Replace("SERIALIZED_OUTSIDE_BUNDLE/", "");
+								var clipURL = Path.Combine(Globals.GetCustomSongsPath(), customTrackReference, videoName);
+								videoPlayer.url = clipURL;
+							}
+						}
 					}
 				}
 			}
