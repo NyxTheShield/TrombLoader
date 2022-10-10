@@ -49,7 +49,7 @@ namespace TrombLoader.Class_Patches
             videoPlayer.isLooping = true;
             videoPlayer.playOnAwake = true;
 
-            videoPlayer.renderMode = VideoRenderMode.CameraNearPlane;
+            videoPlayer.renderMode = VideoRenderMode.MaterialOverride;
 
             DisableLayer(bgController.bgplane, true);
         }

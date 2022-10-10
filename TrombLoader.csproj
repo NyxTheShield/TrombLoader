@@ -1,81 +1,81 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>TrombLoader</AssemblyName>
-    <Description>Trombone Champ Custom Chart Loader</Description>
-    <Version>1.2.0</Version>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>latest</LangVersion>
-    <YourTromboneChampInstallationPath>D:\Games\SteamLibrary\steamapps\common\TromboneChamp</YourTromboneChampInstallationPath>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<AssemblyName>TrombLoader</AssemblyName>
+		<Description>Trombone Champ Custom Chart Loader</Description>
+		<Version>1.2.1</Version>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<LangVersion>latest</LangVersion>
+		<YourTromboneChampInstallationPath>D:\Games\SteamLibrary\steamapps\common\TromboneChamp</YourTromboneChampInstallationPath>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="Exists('..\..\TromboneChamp_Data')">
-       <TromboneChampDir>..\..</TromboneChampDir>
-   </PropertyGroup>
+	<PropertyGroup Condition="Exists('..\..\TromboneChamp_Data')">
+		<TromboneChampDir>..\..</TromboneChampDir>
+	</PropertyGroup>
 
-   <PropertyGroup Condition="!Exists('..\..\TromboneChamp_Data')">
-       <TromboneChampDir>$(YourTromboneChampInstallationPath)</TromboneChampDir>
-   </PropertyGroup>
+	<PropertyGroup Condition="!Exists('..\..\TromboneChamp_Data')">
+		<TromboneChampDir>$(YourTromboneChampInstallationPath)</TromboneChampDir>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
-    <PackageReference Include="BepInEx.Core" Version="5.*" />
-    <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
+		<PackageReference Include="BepInEx.Core" Version="5.*" />
+		<PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
-  </ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+	</ItemGroup>
 
-  <ItemGroup>
-   <Reference Include="UnityEngine.AudioModule">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
-   </Reference>
-   <Reference Include="UnityEngine.CoreModule">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-   </Reference>
-   <Reference Include="UnityEngine.InputLegacyModule">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
-   </Reference>
-   <Reference Include="UnityEngine.JSONSerializeModule">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
-   </Reference>
-   <Reference Include="UnityEngine.UnityWebRequestAudioModule.dll">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
-   </Reference>
-   <Reference Include="UnityEngine.UnityWebRequestModule.dll">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
-   </Reference>
-   <Reference Include="UnityEngine.UnityWebRequestWWWModule">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
-   </Reference>
-   <Reference Include="UnityEngine.UnityWebRequestTextureModule">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
-   </Reference>
-   <Reference Include="UnityEngine">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.dll</HintPath>
-   </Reference>
-   <Reference Include="UnityEngine.AssetBundleModule">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
-   </Reference>
-   <Reference Include="Assembly-CSharp">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\Assembly-CSharp-nstrip.dll</HintPath>
-   </Reference>
-   <Reference Include="Assembly-CSharp-firstpass">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
-   </Reference>
-   <Reference Include="UnityEngine.UI">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UI.dll</HintPath>
-   </Reference>
-   <Reference Include="UnityEngine.ImageConversionModule">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
-   </Reference>
-   <Reference Include="UnityEngine.IMGUIModule">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
-   </Reference>
-   <Reference Include="UnityEngine.VideoModule">
-     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.VideoModule.dll</HintPath>
-   </Reference>
- </ItemGroup>
+	<ItemGroup>
+		<Reference Include="UnityEngine.AudioModule">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.InputLegacyModule">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.JSONSerializeModule">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.UnityWebRequestAudioModule.dll">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.UnityWebRequestModule.dll">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.UnityWebRequestWWWModule">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.UnityWebRequestTextureModule">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.AssetBundleModule">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+		</Reference>
+		<Reference Include="Assembly-CSharp">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\Assembly-CSharp-nstrip.dll</HintPath>
+		</Reference>
+		<Reference Include="Assembly-CSharp-firstpass">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.UI">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UI.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.ImageConversionModule">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.IMGUIModule">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.VideoModule">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.VideoModule.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 </Project>
