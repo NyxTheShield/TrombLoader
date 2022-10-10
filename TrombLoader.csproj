@@ -74,5 +74,8 @@
    <Reference Include="UnityEngine.IMGUIModule">
      <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
    </Reference>
+   <Reference Include="UnityEngine.VideoModule">
+     <HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.VideoModule.dll</HintPath>
+   </Reference>
  </ItemGroup>
 </Project>

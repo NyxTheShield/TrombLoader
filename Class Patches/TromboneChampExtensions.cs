@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 namespace TrombLoader.Class_Patches
 {
@@ -37,6 +38,20 @@ namespace TrombLoader.Class_Patches
                 Plugin.LogError("Failed to set up custom BG");
             }
 
+        }
+
+        public static void SetVideoBackground(this BGController bgController, string url)
+        {
+            var planeObject = bgController.bgplane.transform.GetChild(0);
+            var videoPlayer = planeObject.GetComponent<VideoPlayer>() ?? planeObject.gameObject.AddComponent<VideoPlayer>();
+
+            videoPlayer.url = url;
+            videoPlayer.isLooping = true;
+            videoPlayer.playOnAwake = true;
+
+            videoPlayer.renderMode = VideoRenderMode.CameraNearPlane;
+
+            DisableLayer(bgController.bgplane, true);
         }
 
         public static void DisableLayer(GameObject obj, bool enable = false)
