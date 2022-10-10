@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using BepInEx;
+using System.Collections.Generic;
+using System.IO;
+using TrombLoader.Data;
 using UnityEngine;
-using BepInEx;
 
 namespace TrombLoader.Helpers
 {
@@ -19,5 +21,7 @@ namespace TrombLoader.Helpers
         {
             return !File.Exists(Path.Combine(Application.dataPath, "StreamingAssets", "leveldata", $"{trackReference}.tmb"));
         }
+
+        public static List<Tromboner> Tromboners = new();
     }
 }
