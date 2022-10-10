@@ -167,7 +167,11 @@ namespace TrombLoader.Class_Patches
 			}
 			__instance.StartCoroutine(__instance.loadAssetBundleResources());
 			__instance.bgcontroller.songname = customTrackReference;
-			GameObject gameObject = new GameObject();
+            GameObject gameObject = new GameObject();
+
+			// force kill all old puppets
+			Globals.Tromboners.Clear();
+
 			if (!__instance.freeplay)
 			{
 				gameObject = __instance.myLoadedAssetBundle.LoadAsset<GameObject>("BGCam_" + trackReference);
@@ -181,6 +185,80 @@ namespace TrombLoader.Class_Patches
 						var gameObjectOld = gameObject;
 						gameObject = AssetBundleHelper.LoadObjectFromAssetBundlePath<GameObject>(Globals.GetCustomSongsPath() + customTrackReference + "/bg.trombackground");
 						UnityEngine.Object.DontDestroyOnLoad(gameObject);
+
+						var managers = gameObject.GetComponentsInChildren<TromboneEventManager>();
+						foreach (var manager in managers) manager.DeserializeAllGenericEvents();
+
+						var invoker = gameObject.AddComponent<TromboneEventInvoker>();
+						invoker.InitializeInvoker(__instance, managers);
+						UnityEngine.Object.DontDestroyOnLoad(invoker);
+
+						foreach (var videoPlayer in gameObject.GetComponentsInChildren<VideoPlayer>())
+                        {
+							if (videoPlayer.url != null && videoPlayer.url.Contains("SERIALIZED_OUTSIDE_BUNDLE"))
+							{
+								var videoName = videoPlayer.url.Replace("SERIALIZED_OUTSIDE_BUNDLE/", "");
+								var clipURL = Path.Combine(Globals.GetCustomSongsPath(), customTrackReference, videoName);
+								videoPlayer.url = clipURL;
+							}
+						}
+
+						// puppet handling
+						foreach(var trombonePlaceholder in gameObject.GetComponentsInChildren<TrombonerPlaceholder>())
+                        {
+							int trombonerIndex = trombonePlaceholder.TrombonerType == TrombonerType.DoNotOverride ? __instance.puppetnum : (int)trombonePlaceholder.TrombonerType;
+							int tromboneSkinIndex = trombonePlaceholder.TromboneSkin == TromboneSkin.DoNotOverride ? __instance.textureindex : (int)trombonePlaceholder.TromboneSkin;
+							// this specific thing could cause problems later but it's fine for now.
+							trombonePlaceholder.transform.SetParent(gameObject.transform.GetChild(0));
+
+							foreach(Transform child in trombonePlaceholder.transform)
+                            {
+								if (child != null) child.gameObject.SetActive(false);
+                            }
+
+							var sub = new GameObject();
+							sub.transform.SetParent(trombonePlaceholder.transform);
+							sub.transform.SetSiblingIndex(0);
+							sub.transform.localPosition = new Vector3(-0.7f, 0.45f, -1.25f);
+							sub.transform.localEulerAngles = new Vector3(0, 0f, 0f);
+							trombonePlaceholder.transform.Rotate(new Vector3(0f, 19f, 0f));
+							sub.transform.localScale = Vector3.one;
+
+							//handle male tromboners being slightly shorter
+							if(trombonerIndex > 3 && trombonerIndex != 8) sub.transform.localPosition = new Vector3(-0.7f, 0.35f, -1.25f);
+
+							var placeHolder2 = new GameObject("TrombonePlaceHolder");
+							placeHolder2.transform.position = trombonePlaceholder.transform.position;
+							placeHolder2.transform.eulerAngles = trombonePlaceholder.transform.eulerAngles;
+							placeHolder2.transform.localScale = trombonePlaceholder.transform.localScale;
+
+							var tromboneRefs = new GameObject("TromboneTextureRefs");
+							tromboneRefs.transform.SetParent(sub.transform);
+							tromboneRefs.transform.SetSiblingIndex(0);
+
+							var textureRefs = tromboneRefs.AddComponent<TromboneTextureRefs>();
+							textureRefs.trombmaterials = __instance.modelparent.transform.GetChild(0).GetComponent<TromboneTextureRefs>().trombmaterials; // a bit of getchild action to mirror game behaviour
+
+							var trombonerGameObject = Object.Instantiate<GameObject>(__instance.playermodels[trombonerIndex]);
+
+							trombonerGameObject.transform.SetParent(placeHolder2.transform);
+							trombonerGameObject.transform.localScale = Vector3.one;
+
+							var reparent = trombonerGameObject.AddComponent<Reparent>();
+							reparent.instanceID = trombonePlaceholder.InstanceID;
+
+							Tromboner tromboner = new(trombonerGameObject);
+
+							Globals.Tromboners.Add(tromboner);
+
+							//LeanTween.scaleY(tromboner.gameObject, 0.01f, 0.01f); 
+							tromboner.controller.setTromboneTex(trombonePlaceholder.TromboneSkin == TromboneSkin.DoNotOverride ? __instance.textureindex : (int)trombonePlaceholder.TromboneSkin);
+
+							if (GlobalVariables.localsave.cardcollectionstatus[36] > 9)
+							{
+								tromboner.controller.show_rainbow = true;
+							}
+						}
 
 						// very scuffed and temporary, this could probably be completely done on export
 
@@ -201,23 +279,6 @@ namespace TrombLoader.Class_Patches
 
 						// move confetti
 						gameObjectOld.transform.GetChild(2).SetParent(gameObject.transform);
-
-						var managers = gameObject.GetComponentsInChildren<TromboneEventManager>();
-						foreach (var manager in managers) manager.DeserializeAllGenericEvents();
-
-						var invoker = gameObject.AddComponent<TromboneEventInvoker>();
-						invoker.InitializeInvoker(__instance, managers);
-						UnityEngine.Object.DontDestroyOnLoad(invoker);
-
-						foreach (var videoPlayer in gameObject.GetComponentsInChildren<VideoPlayer>())
-                        {
-							if (videoPlayer.url != null && videoPlayer.url.Contains("SERIALIZED_OUTSIDE_BUNDLE"))
-							{
-								var videoName = videoPlayer.url.Replace("SERIALIZED_OUTSIDE_BUNDLE/", "");
-								var clipURL = Path.Combine(Globals.GetCustomSongsPath(), customTrackReference, videoName);
-								videoPlayer.url = clipURL;
-							}
-						}
 					}
 				}
 			}
