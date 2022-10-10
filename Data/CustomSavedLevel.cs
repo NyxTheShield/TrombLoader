@@ -133,6 +133,24 @@ namespace TrombLoader.Data
 			this.lyricstxt = new List<string>();
 			this.lyricspos = new List<float[]>();
 
+			if (jsonObject["note_color_start"] != null)
+			{
+				var noteColorStart = jsonObject["note_color_start"];
+				if (noteColorStart[0] != null && noteColorStart[1] != null && noteColorStart[2] != null)
+				{
+					this.note_color_start = new float[] { noteColorStart[0], noteColorStart[1], noteColorStart[2] };
+				}
+			}
+
+			if (jsonObject["note_color_end"] != null)
+			{
+				var noteColorEnd = jsonObject["note_color_end"];
+				if (noteColorEnd[0] != null && noteColorEnd[1] != null && noteColorEnd[2] != null)
+				{
+					this.note_color_end = new float[] { noteColorEnd[0], noteColorEnd[1], noteColorEnd[2] };
+				}
+			}
+
 			Plugin.LogDebug("Deserializing Chart:");
 			foreach (JSONObject node in jsonObject["lyrics"].AsArray)
 			{
