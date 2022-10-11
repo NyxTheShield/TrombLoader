@@ -2,6 +2,7 @@
 using HarmonyLib;
 using TrombLoader.Helpers;
 using UnityEngine;
+using UnityEngine.Video;
 
 namespace TrombLoader.Class_Patches
 {
@@ -32,8 +33,18 @@ namespace TrombLoader.Class_Patches
             {
                 if (File.Exists(backgroundPath))
                 {
-                    // do nothing
                     // probably change the above to have a proper confirmation it worked at some point
+
+                    foreach (var videoPlayer in __instance.bgplane.transform.parent.parent.GetComponentsInChildren<VideoPlayer>())
+                    {
+                        if (videoPlayer.playOnAwake && videoPlayer.gameObject.activeInHierarchy)
+                        {
+                            videoPlayer.enabled = true;
+                            videoPlayer.playOnAwake = false;
+                            videoPlayer.Pause();
+                            videoPlayer.PlayVideoDelayed(2400);
+                        }
+                    }
                 }
                 else
                 {

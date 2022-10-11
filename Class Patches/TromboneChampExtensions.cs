@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
@@ -40,18 +42,31 @@ namespace TrombLoader.Class_Patches
 
         }
 
+        public static async void PlayVideoDelayed(this VideoPlayer videoPlayer, int delay = 2500)
+        {
+            await Task.Delay(delay);
+
+            videoPlayer?.Play();
+        }
+
         public static void SetVideoBackground(this BGController bgController, string url)
         {
+            DisableLayer(bgController.bgplane, true);
+
             var planeObject = bgController.bgplane.transform.GetChild(0);
             var videoPlayer = planeObject.GetComponent<VideoPlayer>() ?? planeObject.gameObject.AddComponent<VideoPlayer>();
 
             videoPlayer.url = url;
             videoPlayer.isLooping = true;
-            videoPlayer.playOnAwake = true;
+            videoPlayer.playOnAwake = false;
+            videoPlayer.skipOnDrop = true;
+            videoPlayer.renderMode = VideoRenderMode.CameraNearPlane;
+            videoPlayer.targetCamera = bgController.transform.parent.GetChild(1).GetComponent<Camera>();
 
-            videoPlayer.renderMode = VideoRenderMode.MaterialOverride;
+            videoPlayer.enabled = true;
 
-            DisableLayer(bgController.bgplane, true);
+            videoPlayer.Pause();
+            videoPlayer.PlayVideoDelayed();
         }
 
         public static void DisableLayer(GameObject obj, bool enable = false)
