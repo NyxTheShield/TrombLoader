@@ -54,7 +54,7 @@ namespace TrombLoader.Class_Patches
                     aux.Add(customLevel.genre);
                     aux.Add(customLevel.description);
                     aux.Add(customLevel.difficulty.ToString());
-                    aux.Add(customLevel.endpoint.ToString());
+                    aux.Add(Mathf.FloorToInt(customLevel.endpoint / (customLevel.tempo / 60f)).ToString());
                     aux.Add(customLevel.tempo.ToString());
                     aux.Add(index.ToString());
 
