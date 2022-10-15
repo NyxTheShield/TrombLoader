@@ -23,6 +23,27 @@ namespace TrombLoader.Class_Patches
 		//rewrite of the original
 		static bool Prefix(GameController __instance)
 		{
+			if (GlobalVariables.localsettings.calibrationscreen)
+			{
+				if (GlobalVariables.localsettings.mousecontrolmode == 0)
+				{
+					__instance.mouse_rel_pos = 0f;
+				}
+				else if (GlobalVariables.localsettings.mousecontrolmode == 1)
+				{
+					__instance.mouse_rel_pos = 1f;
+				}
+				else if (GlobalVariables.localsettings.mousecontrolmode == 2)
+				{
+					__instance.mouse_rel_pos = 1f;
+				}
+				else if (GlobalVariables.localsettings.mousecontrolmode == 3)
+				{
+					__instance.mouse_rel_pos = 0f;
+				}
+			}
+			GlobalVariables.gameplay_allnotescores.Clear();
+
 			//.... Dont even ask why
 			__instance.toot_keys.Add(KeyCode.Space);
 			__instance.toot_keys.Add(KeyCode.A);
@@ -449,11 +470,26 @@ namespace TrombLoader.Class_Patches
 				__instance.editorcanvas.SetActive(false);
 				__instance.healthobj.SetActive(false);
 			}
+			if (GlobalVariables.screenratio == "1610")
+			{
+				__instance.healthobj.transform.localPosition = new Vector3(-5.31f, 4.35f, 10f);
+			}
 			__instance.pointer.transform.SetAsLastSibling();
-			if (!__instance.freeplay && !__instance.leveleditor)
+			if (!GlobalVariables.localsettings.calibrationscreen)
+			{
+				__instance.curtainc.doSpotLightAnim();
+				if (!__instance.freeplay && !__instance.leveleditor)
+				{
+					__instance.startSong(true);
+				}
+			}
+			else
+			{
+				__instance.curtainc.doTutAnimation();
+			}
+			if (!__instance.freeplay)
 			{
 				__instance.musictrack = __instance.musicref.GetComponent<AudioSource>();
-				__instance.startSong();
 				return false;
 			}
 			if (__instance.freeplay)
