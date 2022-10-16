@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 
@@ -9,9 +8,9 @@ namespace TrombLoader.Class_Patches
     [HarmonyPatch(typeof(SaveSlotController), nameof(SaveSlotController.checkScores))]
     public class SaveSlotControllerPatch
     {
-        static Exception Finalizer(Exception __exception)
+        static bool Prefix()
         {
-            Plugin.LogDebug("checking scores with less errors this time...");
+            Plugin.LogDebug("checking scores (trombloder)...");
 
             var oldTrackRefs = new HashSet<string>(GlobalVariables.localsave.data_trackscores.Select(i => i[0]));
             var newTrackRefs = new HashSet<string>(GlobalVariables.data_trackrefs);
@@ -28,7 +27,7 @@ namespace TrombLoader.Class_Patches
                 GlobalVariables.localsave.data_trackscores = combinedScores;
                 SaverLoader.updateSavedGame();
             }
-            return null;
+            return false;
         }
     }
 }

@@ -94,28 +94,40 @@ public class LevelSelectControllerAdvanceSongsPatch
     }
 }
 
-// size of 100 is hard coded in these methods
+// size of 100 is hard coded in this method
 [HarmonyPatch(typeof(LevelSelectController))]
-public class LevelSelectControllerPopulateSongNamesPatch
+public class LevelSelectControllerCheckForSPatch
 {
     [HarmonyPatch(nameof(LevelSelectController.checkForS))]
-    static bool Postfix(bool value, string tag)
+    static bool Prefix(ref bool __result, string tag)
     {
-        var trackScores = GlobalVariables.localsave.data_trackscores.ToDictionary(i => i[0]);
-        return trackScores.TryGetValue(tag, out string[] vals) && vals[1] == "S";
+        var trackScores = Plugin.Instance.GetTrackScores();
+        __result = trackScores.TryGetValue(tag, out string[] vals) && vals[1] == "S";
+        return false;
     }
+}
 
+// size of 100 is hard coded in this method
+[HarmonyPatch(typeof(LevelSelectController))]
+public class LevelSelectControllerPullLetterScorePatch
+{
     [HarmonyPatch(nameof(LevelSelectController.pullLetterScore))]
-    static string Postfix(string value, string tag)
+    static bool Prefix(ref string __result, string tag)
     {
-        var trackScores = GlobalVariables.localsave.data_trackscores.ToDictionary(i => i[0]);
-        return trackScores.TryGetValue(tag, out string[] vals) ? vals[1] : "-";
+        var trackScores = Plugin.Instance.GetTrackScores();
+        __result = trackScores.TryGetValue(tag, out string[] vals) ? vals[1] : "-";
+        return false;
     }
+}
 
+// size of 100 is hard coded in this method
+[HarmonyPatch(typeof(LevelSelectController))]
+public class LevelSelectControllerPopulateScoresPatch
+{
     [HarmonyPatch(nameof(LevelSelectController.populateScores))]
-    static void Postfix(LevelSelectController __instance)
+    static bool Prefix(LevelSelectController __instance)
     {
-        var trackScores = GlobalVariables.localsave.data_trackscores.ToDictionary(i => i[0]);
+        var trackScores = Plugin.Instance.GetTrackScores();
         string[] vals;
         trackScores.TryGetValue(__instance.alltrackslist[__instance.songindex].trackref, out vals);
         List<string> list = new List<string>();
@@ -128,6 +140,7 @@ public class LevelSelectControllerPopulateSongNamesPatch
         {
             __instance.topscores[k].text = list[k];
         }
+        return false;
     }
 }
 

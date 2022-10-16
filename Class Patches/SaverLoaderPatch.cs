@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using SimpleJSON;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -188,7 +189,62 @@ namespace TrombLoader.Class_Patches
             Plugin.LogDebug("=========================================================================");
             return currentSongData;
         }
+    }
 
+    // size of 100 is hard coded in this method
+    [HarmonyPatch(typeof(SaverLoader), nameof(SaverLoader.grabHighestScore))]
+    class SaverLoaderGrabHigestScoresPatch
+    {
+        static bool Prefix(ref int __result, string songtag)
+        {
+            var trackScores = Plugin.Instance.GetTrackScores();
+            __result = trackScores.TryGetValue(songtag, out string[] vals) ? int.Parse(vals[2]) : 0;
+            return false;
+        }
+    }
 
+    // size of 100 is hard coded in this method
+    [HarmonyPatch(typeof(SaverLoader), nameof(SaverLoader.checkForUpdatedScore))]
+    class SaverLoaderCheckForUpdatedScorePatch
+    {
+        static bool Prefix(string songtag, int newscore, string newletterscore)
+        {
+            Plugin.LogDebug("Checking for updated score: " + songtag + "," + newscore + "," + newletterscore);
+            string[] trackScore = GlobalVariables.localsave.data_trackscores
+                .Where(i => i != null && i[0] == songtag).FirstOrDefault();
+            if (trackScore == null) return false;
+
+            trackScore[1] = getBestLetterScore(trackScore[1], newletterscore);
+            List<int> bestScores = getBestScores(newscore, trackScore);
+            for (int i = 0; i < trackScore.Length - 2 && i < bestScores.Count; i++)
+            {
+                trackScore[i + 2] = bestScores[i].ToString();
+            }
+            Plugin.LogDebug("[Best score] " + songtag + ": " + trackScore[1] + " " + trackScore[2]);
+            return false;
+        }
+
+        private static string getBestLetterScore(string oldScore, string newScore)
+        {
+            string[] allScores = new string[7] { "-", "F", "D", "C", "B", "A", "S" };
+            int oldScoreIndex = 0, newScoreIndex = 0;
+            for (int i = 0; i < allScores.Length; i++)
+            {
+                if (allScores[i] == oldScore) oldScoreIndex = i;
+                if (allScores[i] == newScore) newScoreIndex = i;
+            }
+            return allScores[Math.Max(oldScoreIndex, newScoreIndex)];
+        }
+
+        private static List<int> getBestScores(int newScore, string[] trackScore)
+        {
+            List<int> bestScores = new List<int>();
+            bestScores.Add(newScore);
+            for (int i = 2; i < trackScore.Length; i++)
+            {
+                bestScores.Add(int.Parse(trackScore[i]));
+            }
+            return bestScores.OrderByDescending(i => i).ToList();
+        }
     }
 }
