@@ -17,7 +17,7 @@ namespace TrombLoader.Class_Patches
         {
             var trackReference = GlobalVariables.data_trackrefs[GlobalVariables.chosen_track_index];
 
-            var songPath = Path.Combine(Globals.GetCustomSongsPath(), trackReference);
+            var songPath = Globals.ChartFolders[trackReference];
             var spritePath = Path.Combine(songPath, "bg.png");
             var videoPath = Path.Combine(songPath, "bg.mp4");
             var backgroundPath = Path.Combine(songPath, "bg.trombackground"); // comically large file extension

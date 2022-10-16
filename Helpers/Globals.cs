@@ -10,7 +10,6 @@ namespace TrombLoader.Helpers
     {
         public static readonly string defaultChartName = "song.tmb";
         public static readonly string defaultAudioName = "song.ogg";
-
         public static string GetCustomSongsPath()
         {
             return Path.Combine(Paths.BepInExRootPath, "CustomSongs/");
@@ -23,5 +22,6 @@ namespace TrombLoader.Helpers
         }
 
         public static List<Tromboner> Tromboners = new();
+        public static Dictionary<string, string> ChartFolders = new();
     }
 }

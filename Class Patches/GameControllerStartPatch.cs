@@ -160,7 +160,7 @@ namespace TrombLoader.Class_Patches
 				{
 					Plugin.LogDebug("Nyx: Trying to load ogg from file!");
 
-					var songPath = Globals.GetCustomSongsPath() + customTrackReference + "/song.ogg";
+					var songPath = Path.Combine(Globals.ChartFolders[customTrackReference], "song.ogg");
 					IEnumerator e = Plugin.Instance.GetAudioClipSync(songPath);
 
 					//Worst piece of code I have ever seen, but it does the job, I guess
@@ -201,10 +201,11 @@ namespace TrombLoader.Class_Patches
                 {
 					__instance.bgcontroller.tickontempo = false;
 
-					if (File.Exists(Globals.GetCustomSongsPath() + customTrackReference + "/bg.trombackground"))
+					var songPath = Globals.ChartFolders[customTrackReference];
+					if (File.Exists(Path.Combine(songPath, "bg.trombackground")))
                     {
 						var gameObjectOld = gameObject;
-						gameObject = AssetBundleHelper.LoadObjectFromAssetBundlePath<GameObject>(Globals.GetCustomSongsPath() + customTrackReference + "/bg.trombackground");
+						gameObject = AssetBundleHelper.LoadObjectFromAssetBundlePath<GameObject>(Path.Combine(songPath, "bg.trombackground"));
 						UnityEngine.Object.DontDestroyOnLoad(gameObject);
 
 						var managers = gameObject.GetComponentsInChildren<TromboneEventManager>();
@@ -219,7 +220,7 @@ namespace TrombLoader.Class_Patches
 							if (videoPlayer.url != null && videoPlayer.url.Contains("SERIALIZED_OUTSIDE_BUNDLE"))
 							{
 								var videoName = videoPlayer.url.Replace("SERIALIZED_OUTSIDE_BUNDLE/", "");
-								var clipURL = Path.Combine(Globals.GetCustomSongsPath(), customTrackReference, videoName);
+								var clipURL = Path.Combine(songPath, videoName);
 								videoPlayer.url = clipURL;
 							}
 						}
@@ -516,7 +517,7 @@ namespace TrombLoader.Class_Patches
 		static bool Prefix(GameController __instance, ref string filename)
 		{
 			bool isCustomTrack = false;
-			string customChartPath = Globals.GetCustomSongsPath() + filename + "/song.tmb";
+			string customChartPath = Path.Combine(Globals.ChartFolders[filename], "song.tmb");
 			string baseChartName;
 			if (filename == "EDITOR")
 			{
