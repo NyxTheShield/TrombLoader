@@ -16,6 +16,8 @@ namespace TrombLoader.Class_Patches
     {
         static void Postfix(SaverLoader __instance)
         {
+            Globals.ChartFolders.Clear();
+
             string path = Application.streamingAssetsPath + "/leveldata/songdata.tchamp";
             if (!File.Exists(path))
             {
@@ -59,6 +61,7 @@ namespace TrombLoader.Class_Patches
                     aux.Add(index.ToString());
 
                     fullTrackTitles.Add(aux.ToArray());
+                    Globals.ChartFolders.Add(customLevel.trackRef, songFolder);
                     index++;
                 }
                 else

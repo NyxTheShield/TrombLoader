@@ -123,7 +123,10 @@ namespace TrombLoader.Data
 			this.author = jsonObject["author"];
 			this.genre = jsonObject["genre"];
 			this.description = jsonObject["description"];
-			this.difficulty = jsonObject["difficulty"].AsInt;
+
+			var deserializedDifficulty = jsonObject["difficulty"].AsInt;
+			this.difficulty = deserializedDifficulty > 10 || deserializedDifficulty < 0 ? 10 : deserializedDifficulty;
+
 			this.year = jsonObject["year"].AsInt;
 			this.unk1 = jsonObject["UNK1"];
 			this.backgroundMovement = jsonObject["backgroundMovement"] ?? "none";
