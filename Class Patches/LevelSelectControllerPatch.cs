@@ -98,8 +98,6 @@ public class LevelSelectControllerAdvanceSongsPatch
 [HarmonyPatch(typeof(LevelSelectController))]
 public class LevelSelectControllerPopulateSongNamesPatch
 {
-    public static Dictionary<string, string[]> trackScores;
-
     [HarmonyPatch(nameof(LevelSelectController.checkForS))]
     static bool Postfix(bool value, string tag)
     {
