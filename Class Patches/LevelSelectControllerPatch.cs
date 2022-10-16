@@ -1,4 +1,7 @@
-﻿using HarmonyLib;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using HarmonyLib;
 using UnityEngine;
 
 namespace TrombLoader.Class_Patches;
@@ -91,6 +94,43 @@ public class LevelSelectControllerAdvanceSongsPatch
     }
 }
 
+// size of 100 is hard coded in these methods
+[HarmonyPatch(typeof(LevelSelectController))]
+public class LevelSelectControllerPopulateSongNamesPatch
+{
+    [HarmonyPatch(nameof(LevelSelectController.checkForS))]
+    static bool Postfix(bool value, string tag)
+    {
+        var trackScores = GlobalVariables.localsave.data_trackscores.ToDictionary(i => i[0]);
+        return trackScores.TryGetValue(tag, out string[] vals) && vals[1] == "S";
+    }
+
+    [HarmonyPatch(nameof(LevelSelectController.pullLetterScore))]
+    static string Postfix(string value, string tag)
+    {
+        var trackScores = GlobalVariables.localsave.data_trackscores.ToDictionary(i => i[0]);
+        return trackScores.TryGetValue(tag, out string[] vals) ? vals[1] : "-";
+    }
+
+    [HarmonyPatch(nameof(LevelSelectController.populateScores))]
+    static void Postfix(LevelSelectController __instance)
+    {
+        var trackScores = GlobalVariables.localsave.data_trackscores.ToDictionary(i => i[0]);
+        string[] vals;
+        trackScores.TryGetValue(__instance.alltrackslist[__instance.songindex].trackref, out vals);
+        List<string> list = new List<string>();
+        for (int j = 2; j < 7; j++)
+        {
+            int score = int.Parse(vals[j]);
+            list.Add(score > 0 ? score.ToString("n0") : "-");
+        }
+        for (int k = 0; k < 5; k++)
+        {
+            __instance.topscores[k].text = list[k];
+        }
+    }
+}
+
 [HarmonyPatch(typeof(LevelSelectController))]
 [HarmonyPatch(nameof(LevelSelectController.Start))]
 public class LevelSelectStartPatch
@@ -101,11 +141,11 @@ public class LevelSelectStartPatch
     {
         isActuallyTromboneChamp = GlobalVariables.localsave.progression_trombone_champ;
         GlobalVariables.localsave.progression_trombone_champ = true;
+        __instance.songgraphs = new int[GlobalVariables.data_trackrefs.Length][];
     }
-    
+
     static void Postfix(LevelSelectController __instance)
     {
         if (!isActuallyTromboneChamp) GlobalVariables.localsave.progression_trombone_champ = false;
     }
 }
-
