@@ -134,6 +134,7 @@ public class LevelSelectControllerPopulateScoresPatch
         for (int j = 2; j < 7; j++)
         {
             int score = int.Parse(vals[j]);
+            Debug.Log("test");
             list.Add(score > 0 ? score.ToString("n0") : "-");
         }
         for (int k = 0; k < 5; k++)
