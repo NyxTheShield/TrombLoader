@@ -101,27 +101,40 @@ public class LevelSelectControllerPopulateSongNamesPatch
     [HarmonyPatch(nameof(LevelSelectController.checkForS))]
     static bool Postfix(bool value, string tag)
     {
-        var trackScores = GlobalVariables.localsave.data_trackscores.ToDictionary(i => i[0]);
+        Dictionary<string, string[]> trackScores = new();
+        foreach (var trackscore in GlobalVariables.localsave.data_trackscores)
+        {
+            if (!trackScores.ContainsKey(trackscore[0])) trackScores.Add(trackscore[0], trackscore);
+        }
         return trackScores.TryGetValue(tag, out string[] vals) && vals[1] == "S";
     }
 
     [HarmonyPatch(nameof(LevelSelectController.pullLetterScore))]
     static string Postfix(string value, string tag)
     {
-        var trackScores = GlobalVariables.localsave.data_trackscores.ToDictionary(i => i[0]);
+        Dictionary<string, string[]> trackScores = new();
+        foreach (var trackscore in GlobalVariables.localsave.data_trackscores)
+        {
+            if (!trackScores.ContainsKey(trackscore[0])) trackScores.Add(trackscore[0], trackscore);
+        }
         return trackScores.TryGetValue(tag, out string[] vals) ? vals[1] : "-";
     }
 
     [HarmonyPatch(nameof(LevelSelectController.populateScores))]
     static void Postfix(LevelSelectController __instance)
     {
-        var trackScores = GlobalVariables.localsave.data_trackscores.ToDictionary(i => i[0]);
+        Dictionary<string, string[]> trackScores = new();
+        foreach(var trackscore in GlobalVariables.localsave.data_trackscores)
+        {
+            if (!trackScores.ContainsKey(trackscore[0])) trackScores.Add(trackscore[0], trackscore);
+        }
         string[] vals;
         trackScores.TryGetValue(__instance.alltrackslist[__instance.songindex].trackref, out vals);
         List<string> list = new List<string>();
         for (int j = 2; j < 7; j++)
         {
             int score = int.Parse(vals[j]);
+            Debug.Log("test");
             list.Add(score > 0 ? score.ToString("n0") : "-");
         }
         for (int k = 0; k < 5; k++)
