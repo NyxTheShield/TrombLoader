@@ -17,20 +17,20 @@ namespace TrombLoader.Class_Patches
         {
             var trackReference = GlobalVariables.data_trackrefs[GlobalVariables.chosen_track_index];
 
-            var songPath = Globals.ChartFolders[trackReference];
-            var spritePath = Path.Combine(songPath, "bg.png");
-            var videoPath = Path.Combine(songPath, "bg.mp4");
-            var backgroundPath = Path.Combine(songPath, "bg.trombackground"); // comically large file extension
-
-            // Possible backgrounds in order of priority:
-            // AssetBundle (.trombackground)
-            // Video (.mp4)
-            // Sprite (.png)
-
-            Plugin.LogDebug("Trying to load custom background!!");
-            //string trackReference = GlobalVariables.data_trackrefs[GlobalVariables.chosen_track_index];
             if (Globals.IsCustomTrack(trackReference))
             {
+                var songPath = Globals.ChartFolders[trackReference];
+                var spritePath = Path.Combine(songPath, "bg.png");
+                var videoPath = Path.Combine(songPath, "bg.mp4");
+                var backgroundPath = Path.Combine(songPath, "bg.trombackground"); // comically large file extension
+
+                // Possible backgrounds in order of priority:
+                // AssetBundle (.trombackground)
+                // Video (.mp4)
+                // Sprite (.png)
+
+                Plugin.LogDebug("Trying to load custom background!!");
+
                 if (File.Exists(backgroundPath))
                 {
                     // probably change the above to have a proper confirmation it worked at some point

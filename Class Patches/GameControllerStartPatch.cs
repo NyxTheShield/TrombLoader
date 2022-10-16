@@ -517,7 +517,6 @@ namespace TrombLoader.Class_Patches
 		static bool Prefix(GameController __instance, ref string filename)
 		{
 			bool isCustomTrack = false;
-			string customChartPath = Path.Combine(Globals.ChartFolders[filename], "song.tmb");
 			string baseChartName;
 			if (filename == "EDITOR")
 			{
@@ -538,6 +537,7 @@ namespace TrombLoader.Class_Patches
 			if (File.Exists(baseChartName))
 			{
 				Plugin.LogDebug("found level");
+
 				BinaryFormatter binaryFormatter = new BinaryFormatter();
 				FileStream fileStream = File.Open(baseChartName, FileMode.Open);
 				SavedLevel savedLevel = (SavedLevel)binaryFormatter.Deserialize(fileStream);
@@ -551,7 +551,9 @@ namespace TrombLoader.Class_Patches
 				CustomSavedLevel customLevel = new CustomSavedLevel(savedLevel);
 				if (isCustomTrack)
 				{
-					Plugin.LogDebug("Loading Chart from:" + customChartPath);
+					string customChartPath = Path.Combine(Globals.ChartFolders[filename], "song.tmb");
+					Plugin.LogDebug("Loading Chart from:" + customChartPath); 
+
 					string jsonString = File.ReadAllText(customChartPath);
 					var jsonObject = JSON.Parse(jsonString);
 					Plugin.LogDebug(jsonObject.ToString());
