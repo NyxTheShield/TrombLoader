@@ -13,18 +13,20 @@ public class BeatCounter:MonoBehaviour
     public UnityEvent actionToExecute;
     private bool isInitialized = false;
     public float bpm;
+    public bool runOnZeroBeat = false;
     public void IncrementBeat()
     {
         if (!isInitialized)
         {
             isInitialized = true;
-            return;
+            if (!runOnZeroBeat) return;
         }
-
+        
+        if (targetBeats.Count == 0) return;
+        
         float EighthNoteInterval = 0.125f;
         
         //Checks for Beat
-        Debug.Log($"Checking for Beat Number:"+ currentBeat);
         CheckNote(currentBeat);
         //Checks for 1/8, 2/8 ....... 7/8 of a beat
         for (int i = 1; i < 8; i++)
@@ -34,7 +36,6 @@ public class BeatCounter:MonoBehaviour
             LeanTween.value(0, 1, timeInSeconds).setOnComplete(() =>
             {
                 CheckNote(currentBeat+ newTime);
-                Debug.Log($"Checking for Beat Number:"+ (currentBeat+newTime));
             });
         }
         currentBeat += 1;
@@ -42,6 +43,8 @@ public class BeatCounter:MonoBehaviour
     
     void CheckNote(float target)
     {
+        if (targetBeats.Count == 0) return;
+        
         if (target >= targetBeats[0])
         {
             actionToExecute?.Invoke();
