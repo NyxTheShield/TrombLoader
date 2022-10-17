@@ -3,7 +3,9 @@ using BepInEx.Logging;
 using HarmonyLib;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -112,6 +114,18 @@ namespace TrombLoader
         public void LoadGameplayScene()
         {
             SceneManager.LoadSceneAsync("gameplay", LoadSceneMode.Single);
+        }
+
+        /// <summary>
+        /// Dictionary of track scores
+        /// </summary>
+        /// <returns>Dictionary of key: trackref, value: [ trackref, letter, score1...5 ]</returns>
+        public Dictionary<string, string[]> GetTrackScores()
+        {
+            return GlobalVariables.localsave.data_trackscores
+                .Where(i => i != null && i[0] != null)
+                .GroupBy(i => i[0])
+                .ToDictionary(i => i.Key, i => i.First());
         }
 
         #region logging
