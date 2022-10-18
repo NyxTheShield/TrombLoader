@@ -56,6 +56,7 @@ namespace TrombLoader.Class_Patches
             var planeObject = bgController.bgplane.transform.GetChild(0);
             var videoPlayer = planeObject.GetComponent<VideoPlayer>() ?? planeObject.gameObject.AddComponent<VideoPlayer>();
 
+            planeObject.GetComponent<SpriteRenderer>().color = Color.black;
             videoPlayer.url = url;
             videoPlayer.isLooping = true;
             videoPlayer.playOnAwake = false;
