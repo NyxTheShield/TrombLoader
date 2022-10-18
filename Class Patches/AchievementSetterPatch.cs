@@ -10,13 +10,13 @@ namespace TrombLoader.Class_Patches
     {
         static bool Prefix(string cheevo_name)
         {
-            if (cheevo_name == "PLAY_ALL_SONGS")
+            if (cheevo_name == "PLAY_ALL_SONGS") // actually PLAY_20_SONGS
             {
                 List<string[]> playedSongs = GlobalVariables.localsave.data_trackscores
                     .Where(i => i != null && i[0] != null && int.Parse(i[2]) > 0)
                     .ToList();
 
-                if (playedSongs.Count == GlobalVariables.data_trackrefs.Length)
+                if (playedSongs.Count >= 20)
                 {
                     AchievementSetter.setAchievement(cheevo_name);
                 }

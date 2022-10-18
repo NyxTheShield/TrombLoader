@@ -14,9 +14,9 @@ namespace TrombLoader.Class_Patches
                 .Where(i => i != null && i[0] != null && int.Parse(i[2]) > 0)
                 .ToList();
 
-            if (playedSongs.Count == GlobalVariables.data_trackrefs.Length)
+            if (playedSongs.Count == 20)
             {
-                AchievementSetter.setAchievement("PLAY_ALL_SONGS");
+                AchievementSetter.setAchievement("PLAY_ALL_SONGS"); // actually PLAY_20_SONGS
             }
 
             if (__instance.letterscore == "S" || __instance.letterscore == "SS")
