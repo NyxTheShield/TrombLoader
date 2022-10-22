@@ -78,4 +78,8 @@
 			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.VideoModule.dll</HintPath>
 		</Reference>
 	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="copy $(TargetPath) &quot;$(TromboneChampDir)\BepInEx\plugins&quot;" />
+	</Target>
 </Project>

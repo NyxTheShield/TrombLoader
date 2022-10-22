@@ -556,7 +556,6 @@ namespace TrombLoader.Class_Patches
 
 					string jsonString = File.ReadAllText(customChartPath);
 					var jsonObject = JSON.Parse(jsonString);
-					Plugin.LogDebug(jsonObject.ToString());
 					customLevel.Deserialize(jsonObject);
 				}
 				__instance.bgdata.Clear();

@@ -62,7 +62,10 @@ namespace TrombLoader.Class_Patches
                     aux.Add(index.ToString());
 
                     fullTrackTitles.Add(aux.ToArray());
-                    Globals.ChartFolders.Add(customLevel.trackRef, songFolder);
+                    if (!Globals.ChartFolders.ContainsKey(customLevel.trackRef))
+                    {
+                        Globals.ChartFolders.Add(customLevel.trackRef, songFolder);
+                    }
                     index++;
                 }
                 else
