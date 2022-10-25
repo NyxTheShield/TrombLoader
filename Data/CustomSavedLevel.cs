@@ -154,10 +154,8 @@ namespace TrombLoader.Data
 				}
 			}
 
-			Plugin.LogDebug("Deserializing Chart:");
 			foreach (JSONObject node in jsonObject["lyrics"].AsArray)
 			{
-				Plugin.LogDebug(node.ToString());
 				this.lyricstxt.Add(node["text"].ToString());
 				var aux = new List<float>();
 				aux.Add(node["bar"].AsFloat);
