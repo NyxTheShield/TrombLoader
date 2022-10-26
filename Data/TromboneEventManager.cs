@@ -23,6 +23,8 @@ namespace TrombLoader.Data
         public UnityEvent OnBar;
         public UnityEvent NoteStart;
         public UnityEvent NoteEnd;
+        public UnityEvent PlayerTootInputStart;
+        public UnityEvent PlayerTootInputEnd;
 
         public IntEvent ComboUpdated;
         public Vector3Event MousePositionUpdated;

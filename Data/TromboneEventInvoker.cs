@@ -20,6 +20,7 @@ namespace TrombLoader.Data
         private int barCount = 0;
         private int previousCombo = 0;
         private int previousBGDataIndex = 0;
+        private bool currentInputState = false;
 
         public void InitializeInvoker(GameController controller, TromboneEventManager[] eventManagers)
         {
@@ -85,6 +86,30 @@ namespace TrombLoader.Data
                 foreach (var manager in _eventManagers)
                 {
                     manager.ComboUpdated?.Invoke(previousCombo);
+                }
+            }
+
+            // input start/end events
+            int keysActive = 0;
+            foreach(var toot_key in _controller.toot_keys)
+            {
+                if (Input.GetKey(toot_key)) keysActive++;
+            }
+
+            if(keysActive == 1 || Input.GetMouseButton(0))
+            {
+                if(currentInputState == false)
+                {
+                    currentInputState = true;
+                    foreach (var manager in _eventManagers) manager.PlayerTootInputStart?.Invoke();
+                }
+            }
+            else
+            {
+                if(currentInputState == true)
+                {
+                    currentInputState = false;
+                    foreach (var manager in _eventManagers) manager.PlayerTootInputEnd?.Invoke();
                 }
             }
         }
