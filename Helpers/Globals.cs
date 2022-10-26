@@ -23,5 +23,6 @@ namespace TrombLoader.Helpers
 
         public static List<Tromboner> Tromboners = new();
         public static Dictionary<string, string> ChartFolders = new();
+        public static bool SaveCreationEnabled = true;
     }
 }

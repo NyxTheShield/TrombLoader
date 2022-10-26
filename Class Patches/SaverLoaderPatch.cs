@@ -17,80 +17,89 @@ namespace TrombLoader.Class_Patches
     {
         static void Postfix(SaverLoader __instance)
         {
-            Globals.ChartFolders.Clear();
-
-            string path = Application.streamingAssetsPath + "/leveldata/songdata.tchamp";
-            if (!File.Exists(path))
+            try
             {
-                Plugin.LogDebug("Couldnt load default tracks... could not find global data file");
+                Globals.ChartFolders.Clear();
+
+                string path = Application.streamingAssetsPath + "/leveldata/songdata.tchamp";
+                if (!File.Exists(path))
+                {
+                    Plugin.LogDebug("Couldnt load default tracks... could not find global data file");
+                    return;
+                }
+                Plugin.LogDebug("Appending Custom Tracks to default track list");
+                BinaryFormatter binaryFormatter = new BinaryFormatter();
+                FileStream fileStream = File.Open(path, FileMode.Open);
+                SongData songData = (SongData)binaryFormatter.Deserialize(fileStream);
+                fileStream.Close();
+
+                CreateMissingDirectories();
+
+                //Iterate over custom/songs directories, check for charts song.tmb, and if found, add it to the global track list
+                List<string> fullTrackRefs = GlobalVariables.data_trackrefs.ToList();
+                List<string[]> fullTrackTitles = GlobalVariables.data_tracktitles.ToList();
+
+                var songs = Directory.GetFiles(Globals.GetCustomSongsPath(), "song.tmb", SearchOption.AllDirectories).Select(i => Path.GetDirectoryName(i));
+                songs = songs.Concat(Directory.GetFiles(BepInEx.Paths.PluginPath, "song.tmb", SearchOption.AllDirectories).Select(i => Path.GetDirectoryName(i)));
+
+                var index = GlobalVariables.data_trackrefs.Length;
+                foreach (var songFolder in songs)
+                {
+                    string chartPath = songFolder + "/" + Globals.defaultChartName;
+                    if (File.Exists(chartPath))
+                    {
+                        var customLevel = new CustomSavedLevel(chartPath);
+                        Plugin.LogDebug($"Found Custom Chart!: {customLevel.trackRef}");
+
+                        fullTrackRefs.Add(customLevel.trackRef);
+
+                        var aux = new List<string>();
+                        aux.Add(customLevel.name);
+                        aux.Add(customLevel.shortName);
+                        aux.Add(customLevel.year.ToString());
+                        aux.Add(customLevel.author);
+                        aux.Add(customLevel.genre);
+                        aux.Add(customLevel.description);
+                        aux.Add(customLevel.difficulty.ToString());
+                        aux.Add(Mathf.FloorToInt(customLevel.endpoint / (customLevel.tempo / 60f)).ToString());
+                        aux.Add(customLevel.tempo.ToString());
+                        aux.Add(index.ToString());
+
+                        fullTrackTitles.Add(aux.ToArray());
+                        if (!Globals.ChartFolders.ContainsKey(customLevel.trackRef))
+                        {
+                            Globals.ChartFolders.Add(customLevel.trackRef, songFolder);
+                        }
+                        index++;
+                    }
+                    else
+                    {
+                        Plugin.LogDebug("Folder has no chart, ignoring...");
+                    }
+                }
+
+                GlobalVariables.data_trackrefs = fullTrackRefs.ToArray();
+                GlobalVariables.data_tracktitles = fullTrackTitles.ToArray();
+
+                Plugin.LogDebug("========================================");
+                Plugin.LogDebug("Printing Full Track List:");
+                Plugin.LogDebug("========================================");
+                Plugin.LogDebug($"{"Reference",15} || {"Author",15} || {"BPM",3}");
+                int i = 0;
+                foreach (var trackRef in GlobalVariables.data_trackrefs)
+                {
+                    Plugin.LogDebug($"{trackRef,15} || {GlobalVariables.data_tracktitles[i][3],30} || {GlobalVariables.data_tracktitles[i][7],3}");
+
+                    i += 1;
+                }
                 return;
             }
-            Plugin.LogDebug("Appending Custom Tracks to default track list");
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-            FileStream fileStream = File.Open(path, FileMode.Open);
-            SongData songData = (SongData)binaryFormatter.Deserialize(fileStream);
-            fileStream.Close();
-
-            CreateMissingDirectories();
-
-            //Iterate over custom/songs directories, check for charts song.tmb, and if found, add it to the global track list
-            List<string> fullTrackRefs = GlobalVariables.data_trackrefs.ToList();
-            List<string[]> fullTrackTitles = GlobalVariables.data_tracktitles.ToList();
-
-            var songs = Directory.GetFiles(Globals.GetCustomSongsPath(), "song.tmb", SearchOption.AllDirectories).Select(i => Path.GetDirectoryName(i));
-            songs = songs.Concat(Directory.GetFiles(BepInEx.Paths.PluginPath, "song.tmb", SearchOption.AllDirectories).Select(i => Path.GetDirectoryName(i)));
-
-            var index = GlobalVariables.data_trackrefs.Length;
-            foreach (var songFolder in songs)
+            catch (Exception ex)
             {
-                string chartPath = songFolder + "/" + Globals.defaultChartName;
-                if (File.Exists(chartPath))
-                {
-                    var customLevel = new CustomSavedLevel(chartPath);
-                    Plugin.LogDebug($"Found Custom Chart!: {customLevel.trackRef}");
-
-                    fullTrackRefs.Add(customLevel.trackRef);
-
-                    var aux = new List<string>();
-                    aux.Add(customLevel.name);
-                    aux.Add(customLevel.shortName);
-                    aux.Add(customLevel.year.ToString());
-                    aux.Add(customLevel.author);
-                    aux.Add(customLevel.genre);
-                    aux.Add(customLevel.description);
-                    aux.Add(customLevel.difficulty.ToString());
-                    aux.Add(Mathf.FloorToInt(customLevel.endpoint / (customLevel.tempo / 60f)).ToString());
-                    aux.Add(customLevel.tempo.ToString());
-                    aux.Add(index.ToString());
-
-                    fullTrackTitles.Add(aux.ToArray());
-                    if (!Globals.ChartFolders.ContainsKey(customLevel.trackRef))
-                    {
-                        Globals.ChartFolders.Add(customLevel.trackRef, songFolder);
-                    }
-                    index++;
-                }
-                else
-                {
-                    Plugin.LogDebug("Folder has no chart, ignoring...");
-                }
+                Plugin.LogError(ex.ToString());
+                Plugin.LogError("Disabling save creation/deletion out of an abundance of caution...");
+                Globals.SaveCreationEnabled = false;
             }
-
-            GlobalVariables.data_trackrefs = fullTrackRefs.ToArray();
-            GlobalVariables.data_tracktitles = fullTrackTitles.ToArray();
-
-            Plugin.LogDebug("========================================");
-            Plugin.LogDebug("Printing Full Track List:");
-            Plugin.LogDebug("========================================");
-            Plugin.LogDebug($"{"Reference",15} || {"Author",15} || {"BPM",3}");
-            int i = 0;
-            foreach (var trackRef in GlobalVariables.data_trackrefs)
-            {
-                Plugin.LogDebug($"{trackRef,15} || {GlobalVariables.data_tracktitles[i][3],30} || {GlobalVariables.data_tracktitles[i][7],3}");
-
-                i += 1;
-            }
-            return;
         }
 
         public static void CreateMissingDirectories()
