@@ -156,7 +156,7 @@ namespace TrombLoader.Data
 
 			foreach (JSONObject node in jsonObject["lyrics"].AsArray)
 			{
-				this.lyricstxt.Add(node["text"].ToString());
+				this.lyricstxt.Add(node["text"].Value);
 				var aux = new List<float>();
 				aux.Add(node["bar"].AsFloat);
 				aux.Add(0);
