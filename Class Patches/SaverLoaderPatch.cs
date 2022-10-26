@@ -37,7 +37,9 @@ namespace TrombLoader.Class_Patches
             List<string> fullTrackRefs = GlobalVariables.data_trackrefs.ToList();
             List<string[]> fullTrackTitles = GlobalVariables.data_tracktitles.ToList();
 
-            var songs = Directory.GetDirectories(Globals.GetCustomSongsPath());
+            var songs = Directory.GetFiles(Globals.GetCustomSongsPath(), "song.tmb", SearchOption.AllDirectories).Select(i => Path.GetDirectoryName(i));
+            songs = songs.Concat(Directory.GetFiles(BepInEx.Paths.PluginPath, "song.tmb", SearchOption.AllDirectories).Select(i => Path.GetDirectoryName(i)));
+
             var index = GlobalVariables.data_trackrefs.Length;
             foreach (var songFolder in songs)
             {

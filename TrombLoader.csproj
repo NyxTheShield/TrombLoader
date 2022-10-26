@@ -77,6 +77,9 @@
 		<Reference Include="UnityEngine.VideoModule">
 			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.VideoModule.dll</HintPath>
 		</Reference>
+		<Reference Include="UnityEngine.UIModule">
+			<HintPath>$(TromboneChampDir)\TromboneChamp_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+		</Reference>
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

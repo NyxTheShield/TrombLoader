@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.Events;
 using UnityEngine.PostProcessing;
+using UnityEngine.UI;
 
 [assembly: SecurityPermission(System.Security.Permissions.SecurityAction.RequestMinimum, SkipVerification = true)]
 
@@ -301,6 +302,16 @@ namespace TrombLoader.Class_Patches
 
 						// move confetti
 						gameObjectOld.transform.GetChild(2).SetParent(gameObject.transform);
+
+						// layering
+						var breathCanvas = __instance.bottombreath?.transform.parent?.parent?.GetComponent<Canvas>();
+						if (breathCanvas != null) breathCanvas.planeDistance = 2;
+
+						var champCanvas = __instance.champcontroller.letters[0]?.transform?.parent?.parent?.parent?.GetComponent<Canvas>();
+						if (champCanvas != null) champCanvas.planeDistance = 2;
+						
+						var gameplayCam = GameObject.Find("GameplayCam")?.GetComponent<Camera>();
+						if (gameplayCam != null) gameplayCam.depth = 99;
 					}
 				}
 			}
