@@ -10,12 +10,14 @@ namespace TrombLoader.Data
         public GameObject gameObject;
         public Transform transform;
         public HumanPuppetController controller;
+        public TrombonerPlaceholder placeholder;
 
-        public Tromboner(GameObject _gameObject)
+        public Tromboner(GameObject _gameObject, TrombonerPlaceholder _placeholder)
         {
             gameObject = _gameObject;
             transform = _gameObject.transform;
             controller = _gameObject.GetComponent<HumanPuppetController>();
+            placeholder = _placeholder;
         }
     }
 }

@@ -7,6 +7,7 @@ namespace TrombLoader.Data
     {
         public TrombonerType TrombonerType = TrombonerType.DoNotOverride;
         public TromboneSkin TromboneSkin = TromboneSkin.DoNotOverride;
+        public TrombonerMovementType MovementType = TrombonerMovementType.DoNotOverride;
 
         [HideInInspector, SerializeField]
         public int InstanceID = 0;
@@ -60,5 +61,16 @@ namespace TrombLoader.Data
         Polygon = 6,
         [InspectorName("Champ")]
         Champ = 7,
+    }
+
+    [Serializable]
+    public enum TrombonerMovementType
+    {
+        [InspectorName("Do Not Override (Default)")]
+        DoNotOverride = -1,
+        [InspectorName("Jubilant")]
+        Jubilant = 0,
+        [InspectorName("Estudious")]
+        Estudious = 1,
     }
 }
