@@ -78,7 +78,11 @@ namespace TrombLoader.Class_Patches
 
 			Debug.Log("latency_offset: " + __instance.latency_offset);
 			Application.targetFrameRate = 144;
-			Cursor.lockState = CursorLockMode.Confined;
+
+			if (!__instance.leveleditor)
+			{
+				Cursor.lockState = CursorLockMode.Confined;
+			}
 			__instance.retrying = false;
 			__instance.notescoreaverage = -1f;
 			__instance.notescoresamples = 1f;
@@ -325,18 +329,35 @@ namespace TrombLoader.Class_Patches
 				gameObject2.transform.localPosition = new Vector3(0f, 0f, 0f);
 				__instance.bgcontroller.fullbgobject = gameObject2;
 			}
-			if (__instance.soundset > 0)
+			if (__instance.soundset == 0)
+			{
+				__instance.currentnotesound.volume = 1f;
+			}
+			else if (__instance.soundset == 1)
+			{
+				__instance.currentnotesound.volume = 0.77f;
+			}
+			else if (__instance.soundset == 2)
+			{
+				__instance.currentnotesound.volume = 0.34f;
+			}
+			else if (__instance.soundset == 3)
 			{
 				__instance.currentnotesound.volume = 0.25f;
 			}
-			if (__instance.soundset == 4)
+			else if (__instance.soundset == 4)
+			{
+				__instance.currentnotesound.volume = 0.25f;
+			}
+			else if (__instance.soundset == 5)
 			{
 				__instance.currentnotesound.volume = 0.75f;
 			}
 			string[] array = new string[]
 			{
 			"default",
-			"slidewhistle",
+			"bass",
+			"muted",
 			"eightbit",
 			"club",
 			"fart"
