@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using HarmonyLib;
+using TrombLoader.Data;
 using TrombLoader.Helpers;
 using UnityEngine;
 
@@ -86,6 +87,74 @@ namespace TrombLoader.Class_Patches
                     tromboner.controller.applyFaceTex();
                 }
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(HumanPuppetController))]
+    [HarmonyPatch("startPuppetBob")]
+    public class HumanPuppetControllerPuppetBobPatch
+    {
+        static bool Prefix(HumanPuppetController __instance)
+        {
+            return !__instance.just_testing;
+        }
+    }
+
+    [HarmonyPatch(typeof(HumanPuppetController))]
+    [HarmonyPatch("testMovement")]
+    public class HumanPuppetControllerTestMovementPatch
+    {
+        static bool Prefix()
+        {
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(HumanPuppetController))]
+    [HarmonyPatch("Start")]
+    public class HumanPuppetControllerStartPatch
+    {
+        static void Prefix(HumanPuppetController __instance)
+        {
+            __instance.just_testing = true;
+        }
+
+        static void Postfix(HumanPuppetController __instance)
+        {
+            __instance.just_testing = false;
+
+            Tromboner customTromboner = null;
+            foreach (var tromboner in Globals.Tromboners)
+            {
+                if (tromboner != null && tromboner.controller.Equals(__instance))
+                {
+                    customTromboner = tromboner;
+                }
+            }
+
+            int movementType = 0;
+            if(customTromboner == null)
+            {
+                movementType = GlobalVariables.chosen_vibe;
+            }
+            else
+            {
+                if(customTromboner.placeholder.MovementType == TrombonerMovementType.DoNotOverride)
+                {
+                    movementType = GlobalVariables.chosen_vibe;
+                }
+                else
+                {
+                    movementType = (int)customTromboner.placeholder.MovementType;
+                }
+            }
+
+            LeanTween.value(movementType == 0 ? 10f : -38f, -48f, 7f).setLoopPingPong().setEaseInOutQuart().setOnUpdate(delegate (float val)
+            {
+                __instance.p_parent.transform.localEulerAngles = new Vector3(0f, val, 0f);
+            });
+
+            __instance.estudious = movementType == 1;
         }
     }
 }
