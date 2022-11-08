@@ -114,6 +114,7 @@ namespace TrombLoader.Class_Patches
 			__instance.ui_savebtn.onClick.AddListener(new UnityAction(__instance.tryToSaveLevel));
 			__instance.ui_loadbtn.onClick.AddListener(new UnityAction(__instance.loadFromEditor));
 			BloomModel.Settings settings = __instance.gameplayppp.bloom.settings;
+			QualitySettings.shadows = ShadowQuality.Disable;
 			settings.bloom.intensity = 0f;
 			__instance.gameplayppp.bloom.settings = settings;
 			if (!__instance.freeplay)
@@ -323,6 +324,9 @@ namespace TrombLoader.Class_Patches
 							foreach (var light in GameObject.FindObjectsOfType<Light>()) light.enabled = false;
 							removeDefaultLights.gameObject.AddComponent<SceneLightingHelper>();
 						}
+
+						var addShadows = gameObject.transform.Find("AddShadows");
+						if (addShadows) QualitySettings.shadows = ShadowQuality.All;
 					}
 				}
 			}
