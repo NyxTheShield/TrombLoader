@@ -9,9 +9,9 @@ namespace TrombLoader.Class_Patches
     [HarmonyPatch("loadCharSelect")]
     public class LockControllerPatch
     {
-        static bool Prefix(LockController __instance)
+        /*static bool Prefix(LockController __instance)
         {
-            GlobalVariables.scene_destination = "eine_final";
+            GlobalVariables.scene_destination = "einefinal";
             for (int i = 0; i < GlobalVariables.data_trackrefs.Length; i++)
             {
                 if (GlobalVariables.data_trackrefs[i] == "einefinal") GlobalVariables.chosen_track_index = i;
@@ -19,6 +19,6 @@ namespace TrombLoader.Class_Patches
 
             SceneManager.LoadScene("charselect");
             return false;
-        }
+        }*/
     }
 }

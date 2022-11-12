@@ -15,7 +15,7 @@ namespace TrombLoader.Class_Patches
             Plugin.LogDebug("Loading Gameplay Scene!");
 
 
-            var customTrackReference = GlobalVariables.data_trackrefs[GlobalVariables.chosen_track_index];
+            var customTrackReference = GlobalVariables.chosen_track;
 
 
             if (Globals.IsCustomTrack(customTrackReference))

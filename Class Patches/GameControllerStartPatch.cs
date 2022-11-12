@@ -558,7 +558,6 @@ namespace TrombLoader.Class_Patches
 		//rewrite of the original
 		static bool Prefix(GameController __instance, ref string filename, ref bool customtrack)
 		{
-			bool isCustomTrack = false;
 			string baseChartName;
 			if (filename == "EDITOR")
 			{
@@ -574,7 +573,7 @@ namespace TrombLoader.Class_Patches
 				baseChartName = Application.streamingAssetsPath + "/leveldata/ballgame.tmb";
 				Plugin.LogDebug("Loading Chart:" + baseChartName);
 				Plugin.LogDebug("NYX: HERE WE HOOK OUR CUSTOM CHART!!!!!!!!!!!");
-				isCustomTrack = true;
+				customtrack = true;
 			}
 			if (File.Exists(baseChartName))
 			{
@@ -584,14 +583,14 @@ namespace TrombLoader.Class_Patches
 				FileStream fileStream = File.Open(baseChartName, FileMode.Open);
 				SavedLevel savedLevel = (SavedLevel)binaryFormatter.Deserialize(fileStream);
 				fileStream.Close();
-				if (!isCustomTrack)
+				if (!customtrack)
 				{
 					Plugin.LogDebug("NYX: Printing Ingame Chart!!!!");
 					//Plugin.LogDebug(savedLevel.Serialize().ToString());
 				}
 
 				CustomSavedLevel customLevel = new CustomSavedLevel(savedLevel);
-				if (isCustomTrack)
+				if (customtrack)
 				{
 					string customChartPath = Path.Combine(Globals.ChartFolders[filename], "song.tmb");
 					Plugin.LogDebug("Loading Chart from:" + customChartPath); 
