@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using SimpleJSON;
 using System.Collections;
 using System.IO;
@@ -318,6 +318,13 @@ namespace TrombLoader.Class_Patches
 						
 						var gameplayCam = GameObject.Find("GameplayCam")?.GetComponent<Camera>();
 						if (gameplayCam != null) gameplayCam.depth = 99;
+
+						var removeDefaultLights = gameObject.transform.Find("RemoveDefaultLights");
+						if (removeDefaultLights)
+						{
+							foreach (var light in GameObject.FindObjectsOfType<Light>()) light.enabled = false;
+							removeDefaultLights.gameObject.AddComponent<SceneLightingHelper>();
+						}
 					}
 				}
 			}

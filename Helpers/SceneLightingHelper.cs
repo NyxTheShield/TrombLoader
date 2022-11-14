@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace TrombLoader.Helpers;
 
-public class SceneLightingHelper:MonoBehaviour
+public class SceneLightingHelper : MonoBehaviour
 {
     public Color ambientSkyColor = Color.black;
     public Color ambientEquatorColor = Color.black;
@@ -17,7 +17,7 @@ public class SceneLightingHelper:MonoBehaviour
     public void Start()
     {
         RenderSettings.ambientSkyColor = ambientSkyColor;
-        RenderSettings.ambientEquatorColor = Color.black;
+        RenderSettings.ambientEquatorColor = ambientEquatorColor;
         //RenderSettings.ambientMode = AmbientMode.Flat;
         RenderSettings.ambientIntensity = ambientIntensity;
         RenderSettings.reflectionIntensity = reflectionIntensity;
