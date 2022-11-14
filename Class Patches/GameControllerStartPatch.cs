@@ -95,6 +95,8 @@ namespace TrombLoader.Class_Patches
 			__instance.scores_D = 0;
 			__instance.scores_F = 0;
 
+			__instance.beatstoshow = 64; // By default, this is 16.
+
 			if (GlobalVariables.scene_destination == "freeplay")
 			{
 				__instance.freeplay = true;
