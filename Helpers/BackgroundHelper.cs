@@ -77,11 +77,8 @@ public class BackgroundHelper
 			fillerObject.AddComponent<SpriteRenderer>();
 			fillerObject.transform.SetParent(bg.transform.GetChild(0));
 		}
-		
-		// sort out confetti
-		MakeConfettiObject(bg.transform);
 
-        // layering
+		// layering
         var breathCanvas = instance.bottombreath.transform.parent.parent.GetComponent<Canvas>();
         if (breathCanvas != null) breathCanvas.planeDistance = 2;
 
@@ -104,12 +101,5 @@ public class BackgroundHelper
             QualitySettings.shadows = ShadowQuality.All;
             QualitySettings.shadowDistance = 100;
         }
-    }
-
-    public static void MakeConfettiObject(Transform parent)
-    {
-	    var confholder = new GameObject("ConfettiHolder");
-	    confholder.transform.SetParent(parent);
-	    confholder.AddComponent<ConfettiController>();
     }
 }

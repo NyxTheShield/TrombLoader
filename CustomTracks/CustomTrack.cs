@@ -184,7 +184,7 @@ public class CustomTrack: TromboneTrack
         {
             if (_backgroundBundle != null)
             {
-                _backgroundBundle.Unload(true);
+                _backgroundBundle.Unload(false);
             }
         }
 
