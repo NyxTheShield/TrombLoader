@@ -52,7 +52,7 @@ public class BackgroundHelper
 			var reparent = trombonerGameObject.AddComponent<Reparent>();
 			reparent.instanceID = trombonePlaceholder.InstanceID;
 
-			Tromboner tromboner = new(trombonerGameObject);
+			Tromboner tromboner = new(trombonerGameObject, trombonePlaceholder);
 			Globals.Tromboners.Add(tromboner);
 
 			tromboner.controller.setTromboneTex(trombonePlaceholder.TromboneSkin == TromboneSkin.DoNotOverride ? instance.textureindex : (int)trombonePlaceholder.TromboneSkin);
