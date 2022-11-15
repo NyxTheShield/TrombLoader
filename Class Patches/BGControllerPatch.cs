@@ -15,7 +15,7 @@ namespace TrombLoader.Class_Patches
         public static string BGEffect = "none";
         static void Postfix(BGController __instance)
         {
-            var trackReference = GlobalVariables.data_trackrefs[GlobalVariables.chosen_track_index];
+            var trackReference = GlobalVariables.chosen_track;
 
             if (Globals.IsCustomTrack(trackReference))
             {

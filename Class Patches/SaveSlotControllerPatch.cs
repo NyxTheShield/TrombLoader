@@ -17,7 +17,7 @@ namespace TrombLoader.Class_Patches
                 Plugin.LogDebug("checking scores (trombloder)...");
 
                 var oldTrackRefs = new HashSet<string>(GlobalVariables.localsave.data_trackscores.Select(i => i[0]));
-                var newTrackRefs = new HashSet<string>(GlobalVariables.data_trackrefs);
+                var newTrackRefs = new HashSet<string>(GlobalVariables.data_tracktitles.Select(x => x[2]));
                 var extraTrackRefs = newTrackRefs.Except(oldTrackRefs).ToList();
 
                 Plugin.LogDebug(extraTrackRefs.Count + " tracks to add");

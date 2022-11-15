@@ -29,7 +29,7 @@ public class CurtainControllerPatch
             SceneManager.LoadScene("home");
             return false;
         }
-        if (GlobalVariables.data_trackrefs[GlobalVariables.chosen_track_index] == "einefinal" && !GlobalVariables.localsave.progression_trombone_champ)
+        if (GlobalVariables.chosen_track == "einefinal" && !GlobalVariables.localsave.progression_trombone_champ && GlobalVariables.scene_destination == "einefinal")
         {
             SceneManager.LoadScene("finallevel_fail");
             return false;

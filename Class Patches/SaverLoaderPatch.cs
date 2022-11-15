@@ -36,13 +36,12 @@ namespace TrombLoader.Class_Patches
                 CreateMissingDirectories();
 
                 //Iterate over custom/songs directories, check for charts song.tmb, and if found, add it to the global track list
-                List<string> fullTrackRefs = GlobalVariables.data_trackrefs.ToList();
                 List<string[]> fullTrackTitles = GlobalVariables.data_tracktitles.ToList();
 
                 var songs = Directory.GetFiles(Globals.GetCustomSongsPath(), "song.tmb", SearchOption.AllDirectories).Select(i => Path.GetDirectoryName(i));
                 songs = songs.Concat(Directory.GetFiles(BepInEx.Paths.PluginPath, "song.tmb", SearchOption.AllDirectories).Select(i => Path.GetDirectoryName(i)));
 
-                var index = GlobalVariables.data_trackrefs.Length;
+                var index = GlobalVariables.data_tracktitles.Length;
                 foreach (var songFolder in songs)
                 {
                     string chartPath = songFolder + "/" + Globals.defaultChartName;
@@ -51,11 +50,10 @@ namespace TrombLoader.Class_Patches
                         var customLevel = new CustomSavedLevel(chartPath);
                         Plugin.LogDebug($"Found Custom Chart!: {customLevel.trackRef}");
 
-                        fullTrackRefs.Add(customLevel.trackRef);
-
                         var aux = new List<string>();
                         aux.Add(customLevel.name);
                         aux.Add(customLevel.shortName);
+                        aux.Add(customLevel.trackRef);
                         aux.Add(customLevel.year.ToString());
                         aux.Add(customLevel.author);
                         aux.Add(customLevel.genre);
@@ -78,7 +76,6 @@ namespace TrombLoader.Class_Patches
                     }
                 }
 
-                GlobalVariables.data_trackrefs = fullTrackRefs.ToArray();
                 GlobalVariables.data_tracktitles = fullTrackTitles.ToArray();
 
                 Plugin.LogDebug("========================================");
@@ -86,9 +83,9 @@ namespace TrombLoader.Class_Patches
                 Plugin.LogDebug("========================================");
                 Plugin.LogDebug($"{"Reference",15} || {"Author",15} || {"BPM",3}");
                 int i = 0;
-                foreach (var trackRef in GlobalVariables.data_trackrefs)
+                foreach (var trackRef in GlobalVariables.data_tracktitles)
                 {
-                    Plugin.LogDebug($"{trackRef,15} || {GlobalVariables.data_tracktitles[i][3],30} || {GlobalVariables.data_tracktitles[i][7],3}");
+                    Plugin.LogDebug($"{trackRef,15} || {GlobalVariables.data_tracktitles[i][4],30} || {GlobalVariables.data_tracktitles[i][8],3}");
 
                     i += 1;
                 }
@@ -125,7 +122,7 @@ namespace TrombLoader.Class_Patches
             Plugin.LogDebug("=========================================================================");
             JSONObject jsonobject = new JSONObject();
             int num = 0;
-            foreach (string text in data.data_trackrefs)
+            foreach (string text in data.data_tracktitles.Select(x => x[2]))
             {
                 jsonobject[text]["trackRef"] = text;
                 jsonobject[text]["name"] = data.data_tracktitles[num][0];
@@ -159,9 +156,9 @@ namespace TrombLoader.Class_Patches
             {
                 JSONNode value = keyValuePair.Value;
                 List<string> currentTrackInfo = new List<string>();
-                trackRefs.Add(value["trackRef"]);
                 currentTrackInfo.Add(value["name"].Value);
                 currentTrackInfo.Add(value["shortName"]);
+                currentTrackInfo.Add(value["trackRef"]);
                 currentTrackInfo.Add(value["year"]);
                 currentTrackInfo.Add(value["author"]);
                 currentTrackInfo.Add(value["genre"]);
@@ -180,10 +177,6 @@ namespace TrombLoader.Class_Patches
             var fulltrackRefsList = new List<string>();
             var fulltrackTitles = new List<List<string>>();
 
-            foreach (var reference in currentSongData.data_trackrefs)
-            {
-                fulltrackRefsList.Add(reference);
-            }
             foreach (var reference in trackRefs)
             {
                 fulltrackRefsList.Add(reference);
@@ -198,7 +191,6 @@ namespace TrombLoader.Class_Patches
                 fulltrackTitles.Add(reference);
             }
 
-            currentSongData.data_trackrefs = fulltrackRefsList.ToArray();
             currentSongData.data_tracktitles = (from l in fulltrackTitles select l.ToArray()).ToArray();
             Plugin.LogDebug("=========================================================================");
             return currentSongData;

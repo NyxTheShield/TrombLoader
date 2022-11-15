@@ -13,8 +13,6 @@ using UnityEngine.Events;
 using UnityEngine.PostProcessing;
 using UnityEngine.UI;
 
-[assembly: SecurityPermission(System.Security.Permissions.SecurityAction.RequestMinimum, SkipVerification = true)]
-
 namespace TrombLoader.Class_Patches
 {
     [HarmonyPatch(typeof(GameController))]
@@ -79,7 +77,7 @@ namespace TrombLoader.Class_Patches
 			Debug.Log("latency_offset: " + __instance.latency_offset);
 			Application.targetFrameRate = 144;
 
-			if (!__instance.leveleditor)
+			if (!__instance.leveleditor && !__instance.devmode)
 			{
 				Cursor.lockState = CursorLockMode.Confined;
 			}
@@ -109,7 +107,6 @@ namespace TrombLoader.Class_Patches
 			}
 			__instance.puppetnum = GlobalVariables.chosen_character;
 			__instance.textureindex = GlobalVariables.chosen_trombone;
-			__instance.levelnum = GlobalVariables.chosen_track_index;
 			__instance.soundset = GlobalVariables.chosen_soundset;
 			__instance.popuptextobj.transform.localScale = new Vector3(0f, 1f, 1f);
 			__instance.multtextobj.transform.localScale = new Vector3(0f, 1f, 1f);
@@ -119,10 +116,23 @@ namespace TrombLoader.Class_Patches
 			QualitySettings.shadows = ShadowQuality.Disable; // Default
 			settings.bloom.intensity = 0f;
 			__instance.gameplayppp.bloom.settings = settings;
-			if (!__instance.freeplay)
+			if (!__instance.freeplay && !__instance.leveleditor)
 			{
-				__instance.songtitle.text = GlobalVariables.data_tracktitles[__instance.levelnum][0];
-				__instance.songtitleshadow.text = GlobalVariables.data_tracktitles[__instance.levelnum][0];
+				if (!__instance.devmode)
+				{
+					__instance.songtitle.text = GlobalVariables.chosen_track_data.trackname_long;
+					__instance.songtitleshadow.text = GlobalVariables.chosen_track_data.trackname_long;
+				}
+				else
+				{
+					__instance.songtitle.text = "testing";
+					__instance.songtitleshadow.text = "testing";
+				}
+			}
+			else if (__instance.leveleditor)
+			{
+				__instance.songtitle.text = "LEVEL EDITOR";
+				__instance.songtitleshadow.text = "LEVEL EDITOR";
 			}
 			else if (__instance.freeplay)
 			{
@@ -133,8 +143,8 @@ namespace TrombLoader.Class_Patches
 				__instance.highestcombo.text = "";
 				__instance.highestcomboshad.text = "";
 			}
-			string baseGameChartPath = "/StreamingAssets/trackassets/";
-			string trackReference = GlobalVariables.data_trackrefs[__instance.levelnum];
+			string baseGameChartPath = "/trackassets/";
+			string trackReference = GlobalVariables.chosen_track;
 			string customTrackReference = trackReference;
 			bool isCustomTrack = false;
 			if (!__instance.freeplay)
@@ -145,20 +155,20 @@ namespace TrombLoader.Class_Patches
 			{
 				baseGameChartPath += "freeplay";
 			}
-			if (!File.Exists(Application.dataPath + baseGameChartPath))
+			if (!File.Exists(Application.streamingAssetsPath + baseGameChartPath))
 			{
 				Plugin.LogDebug("Nyx: Cant load asset bundle, must be a custom song, hijacking Ball game!");
-				baseGameChartPath = "/StreamingAssets/trackassets/ballgame";
+				baseGameChartPath = "/trackassets/ballgame";
 				trackReference = "ballgame";
 				isCustomTrack = true;
 			}
-			__instance.myLoadedAssetBundle = AssetBundle.LoadFromFile(Application.dataPath + baseGameChartPath);
+			__instance.myLoadedAssetBundle = AssetBundle.LoadFromFile(Application.streamingAssetsPath + baseGameChartPath);
 			if (__instance.myLoadedAssetBundle == null)
 			{
 				Plugin.LogDebug("Failed to load AssetBundle!");
 				return false;
 			}
-			Plugin.LogDebug("LOADED ASSETBUNDLE: " + Application.dataPath + baseGameChartPath);
+			Plugin.LogDebug("LOADED ASSETBUNDLE: " + Application.streamingAssetsPath + baseGameChartPath);
 			if (!__instance.freeplay)
 			{
 				AudioSource component = __instance.myLoadedAssetBundle.LoadAsset<GameObject>("music_" + trackReference).GetComponent<AudioSource>();
@@ -379,7 +389,7 @@ namespace TrombLoader.Class_Patches
 			"club",
 			"fart"
 			};
-			__instance.mySoundAssetBundle = AssetBundle.LoadFromFile(Application.dataPath + "/StreamingAssets/soundpacks/soundpack" + array[__instance.soundset]);
+			__instance.mySoundAssetBundle = AssetBundle.LoadFromFile(Application.streamingAssetsPath + "/soundpacks/soundpack" + array[__instance.soundset]);
 			if (__instance.mySoundAssetBundle == null)
 			{
 				Plugin.LogDebug("Failed to load sound pack AssetBundle!");
@@ -496,7 +506,7 @@ namespace TrombLoader.Class_Patches
 			__instance.leftbounds.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(__instance.zeroxpos, 60f, 0f);
 			if (!__instance.leveleditor && !__instance.freeplay)
 			{
-				__instance.buildLevel(__instance.levelnum);
+				__instance.buildLevel();
 				__instance.trackmovemult = __instance.tempo / 60f * (float)__instance.defaultnotelength;
 				float num3 = __instance.zeroxpos - __instance.noteoffset * -__instance.trackmovemult;
 				LeanTween.value(num3 + 1000f, num3, 1.5f).setEaseInOutQuad().setOnUpdate(delegate (float val)
@@ -520,9 +530,9 @@ namespace TrombLoader.Class_Patches
 				__instance.editorcanvas.SetActive(false);
 				__instance.healthobj.SetActive(false);
 			}
-			if (GlobalVariables.screenratio == "1610")
+			if (GlobalVariables.testScreenRatio() == 1610)
 			{
-				__instance.healthobj.transform.localPosition = new Vector3(-5.31f, 4.35f, 10f);
+				__instance.healthobj.transform.localPosition = new Vector3(-5.3f, 4.32f, 10f);
 			}
 			__instance.pointer.transform.SetAsLastSibling();
 			if (!GlobalVariables.localsettings.calibrationscreen)
@@ -563,9 +573,8 @@ namespace TrombLoader.Class_Patches
 	class GameControllerTryToLoadLevelPatch
 	{
 		//rewrite of the original
-		static bool Prefix(GameController __instance, ref string filename)
+		static bool Prefix(GameController __instance, ref string filename, ref bool customtrack)
 		{
-			bool isCustomTrack = false;
 			string baseChartName;
 			if (filename == "EDITOR")
 			{
@@ -581,7 +590,7 @@ namespace TrombLoader.Class_Patches
 				baseChartName = Application.streamingAssetsPath + "/leveldata/ballgame.tmb";
 				Plugin.LogDebug("Loading Chart:" + baseChartName);
 				Plugin.LogDebug("NYX: HERE WE HOOK OUR CUSTOM CHART!!!!!!!!!!!");
-				isCustomTrack = true;
+				customtrack = true;
 			}
 			if (File.Exists(baseChartName))
 			{
@@ -591,14 +600,14 @@ namespace TrombLoader.Class_Patches
 				FileStream fileStream = File.Open(baseChartName, FileMode.Open);
 				SavedLevel savedLevel = (SavedLevel)binaryFormatter.Deserialize(fileStream);
 				fileStream.Close();
-				if (!isCustomTrack)
+				if (!customtrack)
 				{
 					Plugin.LogDebug("NYX: Printing Ingame Chart!!!!");
 					//Plugin.LogDebug(savedLevel.Serialize().ToString());
 				}
 
 				CustomSavedLevel customLevel = new CustomSavedLevel(savedLevel);
-				if (isCustomTrack)
+				if (customtrack)
 				{
 					string customChartPath = Path.Combine(Globals.ChartFolders[filename], "song.tmb");
 					Plugin.LogDebug("Loading Chart from:" + customChartPath); 
@@ -625,13 +634,16 @@ namespace TrombLoader.Class_Patches
 				{
 					__instance.note_c_start = customLevel.note_color_start;
 					__instance.note_c_end = customLevel.note_color_end;
-					__instance.col_r_1.text = __instance.note_c_start[0].ToString();
-					__instance.col_g_1.text = __instance.note_c_start[1].ToString();
-					__instance.col_b_1.text = __instance.note_c_start[2].ToString();
-					__instance.col_r_2.text = __instance.note_c_end[0].ToString();
-					__instance.col_g_2.text = __instance.note_c_end[1].ToString();
-					__instance.col_b_2.text = __instance.note_c_end[2].ToString();
-					Plugin.LogDebug(__instance.col_r_1.text + __instance.col_g_1.text + __instance.col_b_1.text);
+					if (__instance.leveleditor)
+					{
+						__instance.col_r_1.text = __instance.note_c_start[0].ToString();
+						__instance.col_g_1.text = __instance.note_c_start[1].ToString();
+						__instance.col_b_1.text = __instance.note_c_start[2].ToString();
+						__instance.col_r_2.text = __instance.note_c_end[0].ToString();
+						__instance.col_g_2.text = __instance.note_c_end[1].ToString();
+						__instance.col_b_2.text = __instance.note_c_end[2].ToString();
+						Plugin.LogDebug(__instance.col_r_1.text + __instance.col_g_1.text + __instance.col_b_1.text);
+					}
 				}
 				__instance.levelendpoint = customLevel.endpoint;
 				__instance.editorendpostext.text = "end: " + __instance.levelendpoint;
@@ -655,8 +667,8 @@ namespace TrombLoader.Class_Patches
 				var modelCam = GameObject.Find("3dModelCamera")?.GetComponent<Camera>();
 				if (modelCam != null) modelCam.clearFlags = CameraClearFlags.Depth;
 
-				Plugin.LogDebug("level end TIME: " + __instance.levelendtime);
-				Plugin.LogDebug("Game Loaded");
+				Plugin.LogDebug("Level end TIME: " + __instance.levelendtime);
+				Plugin.LogDebug("Level Loaded!!");
 
 				return false;
 			}
