@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using BaboonAPI.Hooks.Tracks;
 using Newtonsoft.Json;
+using TrombLoader.Data;
+using TrombLoader.Helpers;
 using UnityEngine;
 
 namespace TrombLoader.CustomTracks;
@@ -157,11 +159,21 @@ public class CustomTrack: TromboneTrack
             if (File.Exists(Path.Combine(songPath, "bg.trombackground")))
             {
                 _backgroundBundle = AssetBundle.LoadFromFile(Path.Combine(songPath, "bg.trombackground"));
+                var bg = _backgroundBundle.LoadAsset<GameObject>("assets/_background.prefab");
+                var managers = bg.GetComponentsInChildren<TromboneEventManager>();
+                foreach (var eventManager in managers)
+                {
+                    eventManager.DeserializeAllGenericEvents();
+                }
 
-                // TODO attach events
-                return _backgroundBundle.LoadAsset<GameObject>("assets/_background.prefab");
+                var invoker = bg.AddComponent<TromboneEventInvoker>();
+                invoker.InitializeInvoker(ctx.controller, managers);
+
+                BackgroundHelper.ApplyBackgroundTransforms(ctx.controller, bg);
+
+                return bg;
             }
-            
+
             // TODO handle other background types
 
             Plugin.LogError("Failed to load background");
