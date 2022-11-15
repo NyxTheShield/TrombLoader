@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using System;
@@ -20,9 +21,13 @@ namespace TrombLoader
     {
         public static Plugin Instance;
         public AudioClip currentClip;
-        
+
+        public ConfigEntry<int> beatsToShow;
         private void Awake()
         {
+            var customFile = new ConfigFile(Path.Combine(Paths.ConfigPath, "TrombLoader.cfg"), true);
+            beatsToShow = customFile.Bind("General", "Note Display Limit", 64, "The maximum amount of notes displayed on screen at once.");
+
             Instance = this;
             LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
             var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
