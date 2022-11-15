@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using BaboonAPI.Hooks;
+using BaboonAPI.Hooks.Tracks;
 using Newtonsoft.Json;
-using TrombLoader.Helpers;
 using UnityEngine;
 
 namespace TrombLoader.CustomTracks;
 
 [Serializable]
-public class CustomTrack: Tracks.TromboneTrack
+public class CustomTrack: TromboneTrack
 {
     [JsonIgnore]
     public string folderPath { get; set; }
@@ -110,7 +109,7 @@ public class CustomTrack: Tracks.TromboneTrack
         return level;
     }
 
-    public Tracks.LoadedTromboneTrack LoadTrack()
+    public LoadedTromboneTrack LoadTrack()
     {
         return new LoadedCustomTrack(this);
     }
@@ -120,7 +119,7 @@ public class CustomTrack: Tracks.TromboneTrack
         return true;
     }
 
-    public class LoadedCustomTrack : Tracks.LoadedTromboneTrack
+    public class LoadedCustomTrack : LoadedTromboneTrack
     {
         private CustomTrack _parent;
         private AssetBundle _backgroundBundle;
@@ -130,7 +129,7 @@ public class CustomTrack: Tracks.TromboneTrack
             _parent = parent;
         }
 
-        public Tracks.TrackAudio LoadAudio()
+        public TrackAudio LoadAudio()
         {
             var songPath = Path.Combine(_parent.folderPath, "song.ogg");
             var e = Plugin.Instance.GetAudioClipSync(songPath);
@@ -141,7 +140,7 @@ public class CustomTrack: Tracks.TromboneTrack
                 switch (e.Current)
                 {
                     case AudioClip clip:
-                        return new Tracks.TrackAudio(clip, 1.0f);
+                        return new TrackAudio(clip, 1.0f);
                     case string err:
                         Plugin.LogError(err);
                         return null;
@@ -152,7 +151,7 @@ public class CustomTrack: Tracks.TromboneTrack
             return null;
         }
 
-        public GameObject LoadBackground()
+        public GameObject LoadBackground(BackgroundContext ctx)
         {
             var songPath = _parent.folderPath;
             if (File.Exists(Path.Combine(songPath, "bg.trombackground")))

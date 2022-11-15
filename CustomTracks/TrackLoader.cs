@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using BaboonAPI.Hooks;
+using BaboonAPI.Hooks.Tracks;
 using Newtonsoft.Json;
 using TrombLoader.Helpers;
 
 namespace TrombLoader.CustomTracks;
 
-public class TrackLoader: Tracks.Callback
+public class TrackLoader: TrackRegistrationEvent.Listener
 {
     private JsonSerializer _serializer = new();
 
-    public IEnumerable<Tracks.TromboneTrack> OnRegisterTracks()
+    public IEnumerable<TromboneTrack> OnRegisterTracks()
     {
         CreateMissingDirectories();
         var songs = Directory.GetDirectories(Globals.GetCustomSongsPath());

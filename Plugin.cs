@@ -1,17 +1,15 @@
-﻿using BepInEx;
-using BepInEx.Logging;
-using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using BaboonAPI.Hooks;
 using System.Linq;
+using BaboonAPI.Hooks.Tracks;
+using BepInEx;
+using BepInEx.Logging;
 using TrombLoader.CustomTracks;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
-
 
 namespace TrombLoader
 {
@@ -27,7 +25,7 @@ namespace TrombLoader
             // var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             // harmony.PatchAll();
 
-            Tracks.EVENT.Register(new TrackLoader());
+            TrackRegistrationEvent.EVENT.Register(new TrackLoader());
         }
 
         public IEnumerator GetAudioClipSync(string path, Action callback = null)

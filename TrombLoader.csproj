@@ -3,7 +3,7 @@
         <TargetFramework>net472</TargetFramework>
         <AssemblyName>TrombLoader</AssemblyName>
         <Description>Trombone Champ Custom Chart Loader</Description>
-        <Version>1.3.0</Version>
+        <Version>2.0.0-pre</Version>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
@@ -19,8 +19,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="TromboneChamp.GameLibs" Version="1.7.0" />
-        <PackageReference Include="TromboneChamp.BaboonAPI" Version="2.0.0-pre" />
+        <PackageReference Include="TromboneChamp.GameLibs" Version="1.8.5" />
+        <PackageReference Include="TromboneChamp.BaboonAPI" Version="2.0.0-pre.2" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
 </Project>
