@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using TrombLoader.Data;
 using TrombLoader.Helpers;
 using UnityEngine;
+using UnityEngine.Video;
 
 namespace TrombLoader.CustomTracks;
 
@@ -25,7 +26,7 @@ public class CustomTrack: TromboneTrack
 
     [JsonProperty("year")]
     private int yearInt;
-    
+
     public string genre { get; }
     public int difficulty { get; }
     public int tempo { get; }
@@ -39,7 +40,7 @@ public class CustomTrack: TromboneTrack
     public float[] note_color_end { get; }
     public float[][] notes { get; }
     public float[][] bgdata { get; }
-    
+
     [JsonIgnore]
     public string trackref => trackRef;
     [JsonIgnore]
@@ -148,7 +149,7 @@ public class CustomTrack: TromboneTrack
                         return null;
                 }
             }
-            
+
             Plugin.LogError("Failed to load audio");
             return null;
         }
@@ -169,12 +170,37 @@ public class CustomTrack: TromboneTrack
                 var invoker = bg.AddComponent<TromboneEventInvoker>();
                 invoker.InitializeInvoker(ctx.controller, managers);
 
+                foreach (var videoPlayer in bg.GetComponentsInChildren<VideoPlayer>())
+                {
+                    if (videoPlayer.url == null || !videoPlayer.url.Contains("SERIALIZED_OUTSIDE_BUNDLE")) continue;
+                    var videoName = videoPlayer.url.Replace("SERIALIZED_OUTSIDE_BUNDLE/", "");
+                    var clipURL = Path.Combine(songPath, videoName);
+                    videoPlayer.url = clipURL;
+                }
+
                 BackgroundHelper.ApplyBackgroundTransforms(ctx.controller, bg);
 
                 return bg;
             }
+            else
+            {
+                _backgroundBundle = AssetBundle.LoadFromFile($"{Application.streamingAssetsPath}/trackassets/ballgame");
+                var bg = _backgroundBundle.LoadAsset<GameObject>("BGCam_ballgame");
 
-            // TODO handle other background types
+                var videoPath = Path.Combine(songPath, "bg.mp4");
+                if (File.Exists(videoPath))
+                {
+                    BackgroundHelper.ApplyVideo(bg, videoPath);
+                    return bg;
+                }
+
+                var spritePath = Path.Combine(songPath, "bg.png");
+                if (File.Exists(spritePath))
+                {
+                    BackgroundHelper.ApplyImage(bg, spritePath);
+                    return bg;
+                }
+            }
 
             Plugin.LogError("Failed to load background");
             return new GameObject();

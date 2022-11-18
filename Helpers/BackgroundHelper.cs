@@ -1,5 +1,6 @@
 ﻿using TrombLoader.Data;
 using UnityEngine;
+using UnityEngine.Video;
 
 namespace TrombLoader.Helpers;
 
@@ -62,7 +63,7 @@ public class BackgroundHelper
 				tromboner.controller.show_rainbow = true;
 			}
 		}
-		
+
 		// handle foreground objects
 		while (bg.transform.GetChild(1).childCount < 8)
 		{
@@ -84,7 +85,7 @@ public class BackgroundHelper
 
         var champCanvas = instance.champcontroller.letters[0].transform.parent.parent.parent.GetComponent<Canvas>();
         if (champCanvas != null) champCanvas.planeDistance = 2;
-						
+
         var gameplayCam = GameObject.Find("GameplayCam")?.GetComponent<Camera>();
         if (gameplayCam != null) gameplayCam.depth = 99;
 
@@ -101,5 +102,33 @@ public class BackgroundHelper
             QualitySettings.shadows = ShadowQuality.All;
             QualitySettings.shadowDistance = 100;
         }
+    }
+
+    public static void ApplyImage(GameObject bg, string path)
+    {
+	    var bgplane = bg.transform.GetChild(0);
+	    var renderer = bgplane.GetChild(0).GetComponent<SpriteRenderer>();
+	    renderer.sprite = ImageHelper.LoadSpriteFromFile(path);
+
+	    bgplane.gameObject.SetActive(true);
+    }
+
+    public static void ApplyVideo(GameObject bg, string videoPath)
+    {
+	    var bgplane = bg.transform.GetChild(0);
+	    var pc = bgplane.GetChild(0);
+	    var videoPlayer = pc.GetComponent<VideoPlayer>() ?? pc.gameObject.AddComponent<VideoPlayer>();
+
+	    videoPlayer.url = videoPath;
+	    videoPlayer.isLooping = true;
+	    videoPlayer.playOnAwake = true; // TODO play delayed
+	    videoPlayer.skipOnDrop = true;
+	    videoPlayer.renderMode = VideoRenderMode.CameraNearPlane;
+	    videoPlayer.targetCamera = bg.transform.GetComponent<Camera>();
+
+	    videoPlayer.enabled = true;
+	    videoPlayer.Pause();
+
+	    bgplane.gameObject.SetActive(true);
     }
 }
