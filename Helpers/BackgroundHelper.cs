@@ -104,8 +104,23 @@ public class BackgroundHelper
         }
     }
 
+    public static void DisableBackground(GameObject bg)
+    {
+	    var bgplane = bg.transform.GetChild(0).gameObject;
+	    var img1fade = bg.transform.GetChild(0).GetChild(1).gameObject;
+		var img2fade = bg.transform.GetChild(0).GetChild(0).gameObject;
+		var fgholder = bg.transform.GetChild(1).gameObject;
+
+		bgplane.SetActive(false);
+		img1fade.SetActive(false);
+		img2fade.SetActive(false);
+		fgholder.SetActive(false);
+    }
+
     public static void ApplyImage(GameObject bg, string path)
     {
+	    DisableBackground(bg);
+	    
 	    var bgplane = bg.transform.GetChild(0);
 	    var renderer = bgplane.GetChild(0).GetComponent<SpriteRenderer>();
 	    renderer.sprite = ImageHelper.LoadSpriteFromFile(path);
@@ -115,6 +130,8 @@ public class BackgroundHelper
 
     public static void ApplyVideo(GameObject bg, string videoPath)
     {
+	    DisableBackground(bg);
+	    
 	    var bgplane = bg.transform.GetChild(0);
 	    var pc = bgplane.GetChild(0);
 	    var videoPlayer = pc.GetComponent<VideoPlayer>() ?? pc.gameObject.AddComponent<VideoPlayer>();
@@ -130,5 +147,6 @@ public class BackgroundHelper
 	    videoPlayer.Pause();
 
 	    bgplane.gameObject.SetActive(true);
+	    pc.gameObject.SetActive(true);
     }
 }
