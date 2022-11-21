@@ -21,7 +21,7 @@ public class CustomTrack : TromboneTrack
     public string shortName;
     public string author;
     public string description;
-    public int endpoint;
+    public float endpoint;
 
     [JsonProperty("year")] private int yearInt;
 
@@ -48,7 +48,7 @@ public class CustomTrack : TromboneTrack
     [JsonIgnore] public int length => Mathf.FloorToInt(endpoint / (tempo / 60f));
 
     [JsonConstructor]
-    public CustomTrack(string trackRef, string name, string shortName, string author, string description, int endpoint,
+    public CustomTrack(string trackRef, string name, string shortName, string author, string description, float endpoint,
         int year, string genre, int difficulty, int tempo, string backgroundMovement, int savednotespacing, int timesig,
         List<Lyric> lyrics, float[] note_color_start, float[] note_color_end, float[][] notes, float[][] bgdata)
     {

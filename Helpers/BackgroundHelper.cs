@@ -139,7 +139,7 @@ public class BackgroundHelper
 
 	    videoPlayer.url = videoPath;
 	    videoPlayer.isLooping = true;
-	    videoPlayer.playOnAwake = true; // TODO play delayed
+	    videoPlayer.playOnAwake = false; // TODO play delayed
 	    videoPlayer.skipOnDrop = true;
 	    videoPlayer.renderMode = VideoRenderMode.CameraNearPlane;
 	    videoPlayer.targetCamera = bg.transform.GetComponent<Camera>();
