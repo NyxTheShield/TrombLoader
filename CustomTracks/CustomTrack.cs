@@ -12,10 +12,9 @@ using UnityEngine.Video;
 namespace TrombLoader.CustomTracks;
 
 [Serializable]
-public class CustomTrack: TromboneTrack
+public class CustomTrack : TromboneTrack
 {
-    [JsonIgnore]
-    public string folderPath { get; set; }
+    [JsonIgnore] public string folderPath { get; set; }
 
     public string trackRef;
     public string name;
@@ -24,8 +23,7 @@ public class CustomTrack: TromboneTrack
     public string description;
     public int endpoint;
 
-    [JsonProperty("year")]
-    private int yearInt;
+    [JsonProperty("year")] private int yearInt;
 
     public string genre { get; }
     public int difficulty { get; }
@@ -41,23 +39,18 @@ public class CustomTrack: TromboneTrack
     public float[][] notes { get; }
     public float[][] bgdata { get; }
 
-    [JsonIgnore]
-    public string trackref => trackRef;
-    [JsonIgnore]
-    public string trackname_long => name;
-    [JsonIgnore]
-    public string trackname_short => shortName;
-    [JsonIgnore]
-    public string year => yearInt.ToString();
-    [JsonIgnore]
-    public string artist => author;
-    [JsonIgnore]
-    public string desc => description;
-    [JsonIgnore]
-    public int length => Mathf.FloorToInt(endpoint / (tempo / 60f));
+    [JsonIgnore] public string trackref => trackRef;
+    [JsonIgnore] public string trackname_long => name;
+    [JsonIgnore] public string trackname_short => shortName;
+    [JsonIgnore] public string year => yearInt.ToString();
+    [JsonIgnore] public string artist => author;
+    [JsonIgnore] public string desc => description;
+    [JsonIgnore] public int length => Mathf.FloorToInt(endpoint / (tempo / 60f));
 
     [JsonConstructor]
-    public CustomTrack(string trackRef, string name, string shortName, string author, string description, int endpoint, int year, string genre, int difficulty, int tempo, string backgroundMovement, int savednotespacing, int timesig, List<Lyric> lyrics, float[] note_color_start, float[] note_color_end, float[][] notes, float[][] bgdata)
+    public CustomTrack(string trackRef, string name, string shortName, string author, string description, int endpoint,
+        int year, string genre, int difficulty, int tempo, string backgroundMovement, int savednotespacing, int timesig,
+        List<Lyric> lyrics, float[] note_color_start, float[] note_color_end, float[][] notes, float[][] bgdata)
     {
         this.trackRef = trackRef;
         this.name = name;
@@ -127,6 +120,9 @@ public class CustomTrack: TromboneTrack
         private CustomTrack _parent;
         private AssetBundle _backgroundBundle;
 
+        private string videoPath = null;
+        private string imagePath = null;
+
         public LoadedCustomTrack(CustomTrack parent)
         {
             _parent = parent;
@@ -187,23 +183,35 @@ public class CustomTrack: TromboneTrack
                 _backgroundBundle = AssetBundle.LoadFromFile($"{Application.streamingAssetsPath}/trackassets/ballgame");
                 var bg = _backgroundBundle.LoadAsset<GameObject>("BGCam_ballgame");
 
-                var videoPath = Path.Combine(songPath, "bg.mp4");
-                if (File.Exists(videoPath))
+                var possibleVideoPath = Path.Combine(songPath, "bg.mp4");
+                if (File.Exists(possibleVideoPath))
                 {
-                    BackgroundHelper.ApplyVideo(bg, videoPath);
+                    videoPath = possibleVideoPath;
                     return bg;
                 }
 
                 var spritePath = Path.Combine(songPath, "bg.png");
                 if (File.Exists(spritePath))
                 {
-                    BackgroundHelper.ApplyImage(bg, spritePath);
+                    imagePath = spritePath;
                     return bg;
                 }
             }
 
             Plugin.LogError("Failed to load background");
             return new GameObject();
+        }
+
+        public void SetUpBackgroundDelayed(BGController controller, GameObject bg)
+        {
+            if (videoPath != null)
+            {
+                BackgroundHelper.ApplyVideo(bg, videoPath);
+            }
+            else if (imagePath != null)
+            {
+                BackgroundHelper.ApplyImage(bg, imagePath);
+            }
         }
 
         public void Dispose()

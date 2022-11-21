@@ -120,18 +120,19 @@ public class BackgroundHelper
     public static void ApplyImage(GameObject bg, string path)
     {
 	    DisableBackground(bg);
-	    
+
 	    var bgplane = bg.transform.GetChild(0);
 	    var renderer = bgplane.GetChild(0).GetComponent<SpriteRenderer>();
 	    renderer.sprite = ImageHelper.LoadSpriteFromFile(path);
 
 	    bgplane.gameObject.SetActive(true);
+	    renderer.gameObject.SetActive(true);
     }
 
     public static void ApplyVideo(GameObject bg, string videoPath)
     {
 	    DisableBackground(bg);
-	    
+
 	    var bgplane = bg.transform.GetChild(0);
 	    var pc = bgplane.GetChild(0);
 	    var videoPlayer = pc.GetComponent<VideoPlayer>() ?? pc.gameObject.AddComponent<VideoPlayer>();
