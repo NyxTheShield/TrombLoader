@@ -82,8 +82,8 @@ namespace TrombLoader.Class_Patches
 				Cursor.lockState = CursorLockMode.Confined;
 			}
 			__instance.retrying = false;
-			__instance.notescoreaverage = -1f;
-			__instance.notescoresamples = 1f;
+			__instance.notescoreaverage = 0;
+			__instance.notescoresamples = 0;
 			__instance.curtains.SetActive(true);
 			__instance.curtainc = __instance.curtains.GetComponent<CurtainController>();
 			__instance.level_finshed = false;
