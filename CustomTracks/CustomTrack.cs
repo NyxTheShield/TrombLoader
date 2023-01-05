@@ -206,7 +206,7 @@ public class CustomTrack : TromboneTrack
         {
             if (videoPath != null)
             {
-                BackgroundHelper.ApplyVideo(bg, videoPath);
+                BackgroundHelper.ApplyVideo(bg, controller, videoPath);
             }
             else if (imagePath != null)
             {

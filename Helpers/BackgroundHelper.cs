@@ -1,4 +1,5 @@
-﻿using TrombLoader.Data;
+﻿using System.Collections;
+using TrombLoader.Data;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -129,17 +130,22 @@ public class BackgroundHelper
 	    renderer.gameObject.SetActive(true);
     }
 
-    public static void ApplyVideo(GameObject bg, string videoPath)
+    public static void ApplyVideo(GameObject bg, BGController bgController, string videoPath)
     {
 	    DisableBackground(bg);
 
 	    var bgplane = bg.transform.GetChild(0);
 	    var pc = bgplane.GetChild(0);
+
+	    bgplane.gameObject.SetActive(true);
+	    pc.gameObject.SetActive(true);
+	    pc.GetComponent<SpriteRenderer>().color = Color.black;
+
 	    var videoPlayer = pc.GetComponent<VideoPlayer>() ?? pc.gameObject.AddComponent<VideoPlayer>();
 
 	    videoPlayer.url = videoPath;
 	    videoPlayer.isLooping = true;
-	    videoPlayer.playOnAwake = false; // TODO play delayed
+	    videoPlayer.playOnAwake = false;
 	    videoPlayer.skipOnDrop = true;
 	    videoPlayer.renderMode = VideoRenderMode.CameraNearPlane;
 	    videoPlayer.targetCamera = bg.transform.GetComponent<Camera>();
@@ -147,7 +153,16 @@ public class BackgroundHelper
 	    videoPlayer.enabled = true;
 	    videoPlayer.Pause();
 
-	    bgplane.gameObject.SetActive(true);
-	    pc.gameObject.SetActive(true);
+	    bgController.StartCoroutine(PlayVideoDelayed(videoPlayer).GetEnumerator());
+    }
+
+    public static IEnumerable PlayVideoDelayed(VideoPlayer videoPlayer)
+    {
+	    yield return new WaitForSeconds(2.4f);
+
+	    if (videoPlayer != null)
+	    {
+		    videoPlayer.Play();
+	    }
     }
 }
