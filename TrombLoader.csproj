@@ -4,7 +4,7 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<AssemblyName>TrombLoader</AssemblyName>
 		<Description>Trombone Champ Custom Chart Loader</Description>
-		<Version>1.4.2</Version>
+		<Version>1.4.3</Version>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<LangVersion>latest</LangVersion>
 		<YourTromboneChampInstallationPath>D:\Games\SteamLibrary\steamapps\common\TromboneChamp</YourTromboneChampInstallationPath>
