@@ -204,6 +204,14 @@ public class CustomTrack : TromboneTrack
 
         public void SetUpBackgroundDelayed(BGController controller, GameObject bg)
         {
+            // Fix layering
+            // Without this hack, video backgrounds render wrong
+            var modelCam = GameObject.Find("3dModelCamera")?.GetComponent<Camera>();
+            if (modelCam != null)
+            {
+                modelCam.clearFlags = CameraClearFlags.Depth;
+            }
+            
             if (videoPath != null)
             {
                 BackgroundHelper.ApplyVideo(bg, controller, videoPath);
