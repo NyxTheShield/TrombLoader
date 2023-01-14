@@ -62,12 +62,12 @@ public class CustomTrack : TromboneTrack
         this.genre = genre;
         this.difficulty = difficulty;
         this.tempo = tempo;
-        this.backgroundMovement = backgroundMovement;
+        this.backgroundMovement = backgroundMovement ?? "none";
         this.savednotespacing = savednotespacing;
         this.timesig = timesig;
         this.lyrics = lyrics ?? new List<Lyric>();
-        this.note_color_start = note_color_start ?? new[] { 0.5f, 0.5f, 0.5f };
-        this.note_color_end = note_color_end ?? new[] { 1.0f, 1.0f, 1.0f };
+        this.note_color_start = note_color_start ?? new[] { 1.0f, 0.21f, 0f };
+        this.note_color_end = note_color_end ?? new[] { 1.0f, 0.8f, 0.3f };
         this.notes = notes;
         this.bgdata = bgdata ?? Array.Empty<float[]>();
     }
@@ -220,6 +220,9 @@ public class CustomTrack : TromboneTrack
             {
                 BackgroundHelper.ApplyImage(bg, imagePath);
             }
+            
+            // Apply background effect
+            controller.doBGEffect(_parent.backgroundMovement);
         }
 
         public void Dispose()
