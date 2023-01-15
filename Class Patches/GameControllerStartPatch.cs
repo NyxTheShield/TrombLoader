@@ -71,7 +71,9 @@ namespace TrombLoader.Class_Patches
 			__instance.toot_keys.Add(KeyCode.X);
 			__instance.toot_keys.Add(KeyCode.Y);
 			__instance.toot_keys.Add(KeyCode.Z);
-			
+			__instance.toot_keys.Add(KeyCode.LeftArrow);
+			__instance.toot_keys.Add(KeyCode.RightArrow);
+
 			__instance.latency_offset = (float)GlobalVariables.localsettings.latencyadjust * 0.001f;
 
 			Debug.Log("latency_offset: " + __instance.latency_offset);
