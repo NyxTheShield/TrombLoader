@@ -1,12 +1,14 @@
-﻿using System;
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using BaboonAPI.Hooks.Initializer;
 using BaboonAPI.Hooks.Tracks;
 using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.Logging;
+using HarmonyLib;
 using TrombLoader.CustomTracks;
+using TrombLoader.Patch;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -17,15 +19,25 @@ namespace TrombLoader
     public class Plugin : BaseUnityPlugin
     {
         public static Plugin Instance;
+        public ConfigEntry<int> beatsToShow;
+        
+        private Harmony _harmony = new(PluginInfo.PLUGIN_GUID);
 
         private void Awake()
         {
+            var customFile = new ConfigFile(Path.Combine(Paths.ConfigPath, "TrombLoader.cfg"), true);
+            beatsToShow = customFile.Bind("General", "Note Display Limit", 64, "The maximum amount of notes displayed on screen at once.");
+
             Instance = this;
             LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
-            // var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
-            // harmony.PatchAll();
 
+            GameInitializationEvent.Register(Info, TryInitialize);
             TrackRegistrationEvent.EVENT.Register(new TrackLoader());
+        }
+
+        private void TryInitialize()
+        {
+            _harmony.PatchAll(typeof(BeatsToShowPatch));
         }
 
         public IEnumerator GetAudioClipSync(string path, Action callback = null)
@@ -52,18 +64,6 @@ namespace TrombLoader
         public void LoadGameplayScene()
         {
             SceneManager.LoadSceneAsync("gameplay", LoadSceneMode.Single);
-        }
-
-        /// <summary>
-        /// Dictionary of track scores
-        /// </summary>
-        /// <returns>Dictionary of key: trackref, value: [ trackref, letter, score1...5 ]</returns>
-        public Dictionary<string, string[]> GetTrackScores()
-        {
-            return GlobalVariables.localsave.data_trackscores
-                .Where(i => i != null && i[0] != null)
-                .GroupBy(i => i[0])
-                .ToDictionary(i => i.Key, i => i.First());
         }
 
         #region logging
