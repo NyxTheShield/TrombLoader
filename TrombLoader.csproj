@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="TromboneChamp.GameLibs" Version="1.8.5" />
+        <PackageReference Include="TromboneChamp.GameLibs" Version="1.9.0" />
         <PackageReference Include="TromboneChamp.BaboonAPI" Version="2.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
