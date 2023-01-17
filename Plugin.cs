@@ -37,7 +37,7 @@ namespace TrombLoader
 
         private void TryInitialize()
         {
-            _harmony.PatchAll(typeof(BeatsToShowPatch));
+            _harmony.PatchAll();
         }
 
         public IEnumerator GetAudioClipSync(string path, Action callback = null)
