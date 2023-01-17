@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using BaboonAPI.Hooks.Tracks;
 using Newtonsoft.Json;
 using TrombLoader.Helpers;
@@ -13,7 +14,10 @@ public class TrackLoader: TrackRegistrationEvent.Listener
     public IEnumerable<TromboneTrack> OnRegisterTracks()
     {
         CreateMissingDirectories();
-        var songs = Directory.GetDirectories(Globals.GetCustomSongsPath());
+
+        var songs = Directory.GetFiles(Globals.GetCustomSongsPath(), "song.tmb", SearchOption.AllDirectories).Select(i => Path.GetDirectoryName(i));
+        songs = songs.Concat(Directory.GetFiles(BepInEx.Paths.PluginPath, "song.tmb", SearchOption.AllDirectories).Select(i => Path.GetDirectoryName(i)));
+
         foreach (var songFolder in songs)
         {
             var chartPath = songFolder + "/" + Globals.defaultChartName;
