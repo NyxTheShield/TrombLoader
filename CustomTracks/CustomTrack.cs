@@ -227,6 +227,9 @@ public class CustomTrack : TromboneTrack
 
         public void Dispose()
         {
+            // force kill all old puppets
+            Globals.Tromboners.Clear();
+
             if (_backgroundBundle != null)
             {
                 _backgroundBundle.Unload(false);
