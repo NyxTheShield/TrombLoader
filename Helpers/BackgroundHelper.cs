@@ -24,7 +24,7 @@ public class BackgroundHelper
 				if (child != null) child.gameObject.SetActive(false);
             }
 
-			var sub = new GameObject();
+			var sub = new GameObject("RealizedTromboner");
 			sub.transform.SetParent(trombonePlaceholder.transform);
 			sub.transform.SetSiblingIndex(0);
 			sub.transform.localPosition = new Vector3(-0.7f, 0.45f, -1.25f);
@@ -66,10 +66,11 @@ public class BackgroundHelper
 		}
 
 		// handle foreground objects
-		while (bg.transform.GetChild(1).childCount < 8)
+		var fgholder = bg.transform.GetChild(1);
+		while (fgholder.childCount < 8)
 		{
 			var fillerObject = new GameObject("Filler");
-			fillerObject.transform.SetParent(bg.transform.GetChild(1));
+			fillerObject.transform.SetParent(fgholder);
 		}
 
 		// handle two background images
@@ -78,6 +79,13 @@ public class BackgroundHelper
 			var fillerObject = new GameObject("Filler");
 			fillerObject.AddComponent<SpriteRenderer>();
 			fillerObject.transform.SetParent(bg.transform.GetChild(0));
+		}
+		
+		// add confetti holder if missing
+		if (bg.transform.childCount < 3)
+		{
+			var fillerConfettiHolder = new GameObject("ConfettiHolder");
+			fillerConfettiHolder.transform.SetParent(bg.transform);
 		}
 
 		// layering
