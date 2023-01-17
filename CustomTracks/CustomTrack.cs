@@ -220,7 +220,9 @@ public class CustomTrack : TromboneTrack
             {
                 BackgroundHelper.ApplyImage(bg, imagePath);
             }
-            
+
+            controller.tickontempo = false;
+
             // Apply background effect
             controller.doBGEffect(_parent.backgroundMovement);
         }

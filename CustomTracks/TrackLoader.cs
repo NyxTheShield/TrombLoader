@@ -15,8 +15,9 @@ public class TrackLoader: TrackRegistrationEvent.Listener
     {
         CreateMissingDirectories();
 
-        var songs = Directory.GetFiles(Globals.GetCustomSongsPath(), "song.tmb", SearchOption.AllDirectories).Select(i => Path.GetDirectoryName(i));
-        songs = songs.Concat(Directory.GetFiles(BepInEx.Paths.PluginPath, "song.tmb", SearchOption.AllDirectories).Select(i => Path.GetDirectoryName(i)));
+        var songs = Directory.GetFiles(Globals.GetCustomSongsPath(), "song.tmb", SearchOption.AllDirectories)
+            .Concat(Directory.GetFiles(BepInEx.Paths.PluginPath, "song.tmb", SearchOption.AllDirectories))
+            .Select(i => Path.GetDirectoryName(i));
 
         foreach (var songFolder in songs)
         {
@@ -26,8 +27,7 @@ public class TrackLoader: TrackRegistrationEvent.Listener
             using var stream = File.OpenText(chartPath);
             using var reader = new JsonTextReader(stream);
 
-            CustomTrack? customLevel = null;
-
+            CustomTrack customLevel;
             try 
             {
                 customLevel = _serializer.Deserialize<CustomTrack>(reader);
