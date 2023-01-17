@@ -22,7 +22,18 @@ public class TrackLoader: TrackRegistrationEvent.Listener
             using var stream = File.OpenText(chartPath);
             using var reader = new JsonTextReader(stream);
 
-            var customLevel = _serializer.Deserialize<CustomTrack>(reader);
+            CustomTrack? customLevel = null;
+
+            try 
+            {
+                customLevel = _serializer.Deserialize<CustomTrack>(reader);
+            }
+            catch
+            {
+                Plugin.LogWarning($"Unable to deserialize JSON of custom chart: {chartPath}");
+                continue;
+            }
+
             if (customLevel == null) continue;
 
             Plugin.LogDebug($"Found custom chart: {customLevel.trackref}");
