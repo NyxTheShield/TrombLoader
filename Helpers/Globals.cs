@@ -1,7 +1,6 @@
-﻿using BepInEx;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using TrombLoader.Data;
+using BepInEx;
 using UnityEngine;
 
 namespace TrombLoader.Helpers
@@ -21,7 +20,6 @@ namespace TrombLoader.Helpers
             return !File.Exists(Path.Combine(Application.dataPath, "StreamingAssets", "leveldata", $"{trackReference}.tmb"));
         }
 
-        public static List<Tromboner> Tromboners = new();
         public static Dictionary<string, string> ChartFolders = new();
         public static bool SaveCreationEnabled = true;
     }

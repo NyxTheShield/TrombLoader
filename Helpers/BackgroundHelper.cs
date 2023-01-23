@@ -55,7 +55,9 @@ public class BackgroundHelper
 			reparent.instanceID = trombonePlaceholder.InstanceID;
 
 			Tromboner tromboner = new(trombonerGameObject, trombonePlaceholder);
-			Globals.Tromboners.Add(tromboner);
+
+			var customPuppetTrait = trombonerGameObject.AddComponent<CustomPuppetController>();
+			customPuppetTrait.Tromboner = tromboner;
 
 			tromboner.controller.setTromboneTex(trombonePlaceholder.TromboneSkin == TromboneSkin.DoNotOverride ? instance.textureindex : (int)trombonePlaceholder.TromboneSkin);
 
@@ -80,7 +82,7 @@ public class BackgroundHelper
 			fillerObject.AddComponent<SpriteRenderer>();
 			fillerObject.transform.SetParent(bg.transform.GetChild(0));
 		}
-		
+
 		// add confetti holder if missing
 		if (bg.transform.childCount < 3)
 		{

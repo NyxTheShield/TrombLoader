@@ -1,8 +1,8 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 using HarmonyLib;
 using TrombLoader.Data;
-using TrombLoader.Helpers;
-using UnityEngine;
 
 namespace TrombLoader.Patch
 {
@@ -10,49 +10,85 @@ namespace TrombLoader.Patch
     [HarmonyPatch("startSong")]
     public class GameControllerStartSongPatch
     {
-        static void Postfix()
+        static void DoStartSong(GameController controller, float delay)
         {
-            foreach (var tromboner in Globals.Tromboners)
+            var puppetControllers = controller.bgholder.GetComponentsInChildren<HumanPuppetController>();
+            foreach (var pc in puppetControllers)
             {
-                if (tromboner != null) LeanTween.scaleY(tromboner.gameObject, 1f, 0.5f).setEaseOutBounce().setDelay(2f);
+                LeanTween.scaleY(pc.gameObject, 1f, 0.5f).setEaseOutBounce().setDelay(delay);
             }
+        }
+
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            return new CodeMatcher(instructions)
+                .End() // position = last ret, insert before
+                .InsertAndAdvance(
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(OpCodes.Ldloc_1),
+                    CodeInstruction.Call(typeof(GameControllerStartSongPatch), nameof(DoStartSong))
+                )
+                .InstructionEnumeration();
         }
     }
 
     [HarmonyPatch(typeof(GameController))]
-    [HarmonyPatch("startSong")]
+    [HarmonyPatch("startDance")]
     public class GameControllerStartDancePatch
     {
-        static void Postfix(GameController __instance)
+        static void DoStartDance(GameController controller, float num)
         {
-            var tempTempo = __instance.tempo;
-            if (tempTempo > 90f) tempTempo *= 0.5f;
-            if (__instance.beatspermeasure == 1) tempTempo *= 0.6666667f;
-
-            foreach (var tromboner in Globals.Tromboners)
+            var puppetControllers = controller.bgholder.GetComponentsInChildren<HumanPuppetController>();
+            foreach (var pc in puppetControllers)
             {
-                if (tromboner != null) tromboner.controller.startPuppetBob(tempTempo);
+                pc.startPuppetBob(num);
             }
+        }
+
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            return new CodeMatcher(instructions)
+                .End()
+                .InsertAndAdvance(
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(OpCodes.Ldloc_0),
+                    CodeInstruction.Call(typeof(GameControllerStartDancePatch), nameof(DoStartDance))
+                )
+                .InstructionEnumeration();
         }
     }
 
-    [HarmonyPatch(typeof(HumanPuppetController))]
-    [HarmonyPatch("doPuppetControl")]
-    public class HumanPuppetControllerPuppetControlPatch
+    [HarmonyPatch(typeof(GameController))]
+    [HarmonyPatch("Update")]
+    public class GameControllerPuppetUpdatePatch
     {
-        static void Postfix(HumanPuppetController __instance, float vp)
+        private static MethodInfo doPuppetControl_m =
+            AccessTools.Method(typeof(HumanPuppetController), nameof(HumanPuppetController.doPuppetControl));
+
+        static void DoPuppetControl(GameController controller, float vp, float vibratoAmount)
         {
-            if (__instance.transform.parent.name == "PlayerModelHolder")
+            var puppetControllers = controller.bgholder.GetComponentsInChildren<HumanPuppetController>();
+            foreach (var pc in puppetControllers)
             {
-                foreach (var tromboner in Globals.Tromboners)
-                {
-                    if (tromboner != null)
-                    {
-                        tromboner.controller.doPuppetControl(vp);
-                        tromboner.controller.vibrato = __instance.vibrato;
-                    }
-                }
+                pc.doPuppetControl(vp);
+                pc.vibrato = vibratoAmount;
             }
+        }
+
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            return new CodeMatcher(instructions)
+                .SearchForward(instruction => instruction.Calls(doPuppetControl_m))
+                .ThrowIfInvalid("Failed to find injection point in GameController#Update")
+                .Advance(1) // Insert() inserts before, so bump 1 ahead
+                .InsertAndAdvance(
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(OpCodes.Ldloc_S, (byte) 14),
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    CodeInstruction.LoadField(typeof(GameController), nameof(GameController.vibratoamt)),
+                    CodeInstruction.Call(typeof(GameControllerPuppetUpdatePatch), nameof(DoPuppetControl))
+                )
+                .InstructionEnumeration();
         }
     }
 
@@ -60,15 +96,13 @@ namespace TrombLoader.Patch
     [HarmonyPatch("setPuppetBreath")]
     public class GameControllerPuppetBreathPatch
     {
-        static void Postfix(bool hasbreath)
+        static void Postfix(GameController __instance, bool hasbreath)
         {
-            foreach (var tromboner in Globals.Tromboners)
+            var puppetControllers = __instance.bgholder.GetComponentsInChildren<HumanPuppetController>();
+            foreach (var pc in puppetControllers)
             {
-                if (tromboner != null)
-                {
-                    tromboner.controller.outofbreath = hasbreath;
-                    tromboner.controller.applyFaceTex();
-                }
+                pc.outofbreath = hasbreath;
+                pc.applyFaceTex();
             }
         }
     }
@@ -77,15 +111,13 @@ namespace TrombLoader.Patch
     [HarmonyPatch("setPuppetShake")]
     public class GameControllerPuppetShakePatch
     {
-        static void Postfix(bool shake)
+        static void Postfix(GameController __instance, bool shake)
         {
-            foreach (var tromboner in Globals.Tromboners)
+            var puppetControllers = __instance.bgholder.GetComponentsInChildren<HumanPuppetController>();
+            foreach (var pc in puppetControllers)
             {
-                if (tromboner != null)
-                {
-                    tromboner.controller.shaking = shake;
-                    tromboner.controller.applyFaceTex();
-                }
+                pc.shaking = shake;
+                pc.applyFaceTex();
             }
         }
     }
@@ -100,6 +132,9 @@ namespace TrombLoader.Patch
         }
     }
 
+    /// <summary>
+    ///  Disable debugging routine
+    /// </summary>
     [HarmonyPatch(typeof(HumanPuppetController))]
     [HarmonyPatch("testMovement")]
     public class HumanPuppetControllerTestMovementPatch
@@ -114,47 +149,22 @@ namespace TrombLoader.Patch
     [HarmonyPatch("Start")]
     public class HumanPuppetControllerStartPatch
     {
-        static void Prefix(HumanPuppetController __instance)
+        static bool Prefix(HumanPuppetController __instance)
         {
-            __instance.just_testing = true;
+            // just disable for custom tromboners
+            var isCustom = __instance.gameObject.GetComponent<CustomPuppetController>() != null;
+
+            return !isCustom;
         }
 
-        static void Postfix(HumanPuppetController __instance)
+        static void Postfix(HumanPuppetController __instance, bool __runOriginal)
         {
-            __instance.just_testing = false;
-
-            Tromboner customTromboner = null;
-            foreach (var tromboner in Globals.Tromboners)
+            if (!__runOriginal)
             {
-                if (tromboner != null && tromboner.controller.Equals(__instance))
-                {
-                    customTromboner = tromboner;
-                }
+                // apply the texture stuff for custom tromboners
+                __instance.Invoke(nameof(HumanPuppetController.setTextures), 0.5f);
+                __instance.applyFaceTex();
             }
-
-            int movementType = 0;
-            if (customTromboner == null)
-            {
-                movementType = GlobalVariables.chosen_vibe;
-            }
-            else
-            {
-                if (customTromboner.placeholder.MovementType == TrombonerMovementType.DoNotOverride)
-                {
-                    movementType = GlobalVariables.chosen_vibe;
-                }
-                else
-                {
-                    movementType = (int)customTromboner.placeholder.MovementType;
-                }
-            }
-
-            LeanTween.value(movementType == 0 ? 10f : -38f, -48f, 7f).setLoopPingPong().setEaseInOutQuart().setOnUpdate(delegate (float val)
-            {
-                __instance.p_parent.transform.localEulerAngles = new Vector3(0f, val, 0f);
-            });
-
-            __instance.estudious = movementType == 1;
         }
     }
 }
