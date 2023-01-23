@@ -9,65 +9,7 @@ public class BackgroundHelper
 {
     public static void ApplyBackgroundTransforms(GameController instance, GameObject bg)
     {
-        // puppet handling
-		foreach(var trombonePlaceholder in bg.GetComponentsInChildren<TrombonerPlaceholder>())
-        {
-			int trombonerIndex = trombonePlaceholder.TrombonerType == TrombonerType.DoNotOverride
-				? instance.puppetnum
-				: (int) trombonePlaceholder.TrombonerType;
-
-			// this specific thing could cause problems later but it's fine for now.
-			trombonePlaceholder.transform.SetParent(bg.transform.GetChild(0));
-
-			foreach(Transform child in trombonePlaceholder.transform)
-            {
-				if (child != null) child.gameObject.SetActive(false);
-            }
-
-			var sub = new GameObject("RealizedTromboner");
-			sub.transform.SetParent(trombonePlaceholder.transform);
-			sub.transform.SetSiblingIndex(0);
-			sub.transform.localPosition = new Vector3(-0.7f, 0.45f, -1.25f);
-			sub.transform.localEulerAngles = new Vector3(0, 0f, 0f);
-			trombonePlaceholder.transform.Rotate(new Vector3(0f, 19f, 0f));
-			sub.transform.localScale = Vector3.one;
-
-			//handle male tromboners being slightly shorter
-			if(trombonerIndex > 3 && trombonerIndex != 8) sub.transform.localPosition = new Vector3(-0.7f, 0.35f, -1.25f);
-
-			var placeHolder2 = new GameObject("TrombonePlaceHolder");
-			var transform = trombonePlaceholder.transform;
-			placeHolder2.transform.position = transform.position;
-			placeHolder2.transform.eulerAngles = transform.eulerAngles;
-			placeHolder2.transform.localScale = transform.localScale;
-
-			var tromboneRefs = new GameObject("TromboneTextureRefs");
-			tromboneRefs.transform.SetParent(sub.transform);
-			tromboneRefs.transform.SetSiblingIndex(0);
-
-			var textureRefs = tromboneRefs.AddComponent<TromboneTextureRefs>();
-			textureRefs.trombmaterials = instance.modelparent.transform.GetChild(0).GetComponent<TromboneTextureRefs>().trombmaterials; // a bit of getchild action to mirror game behaviour
-
-			var trombonerGameObject = Object.Instantiate(instance.playermodels[trombonerIndex], placeHolder2.transform, true);
-			trombonerGameObject.transform.localScale = Vector3.one;
-
-			var reparent = trombonerGameObject.AddComponent<Reparent>();
-			reparent.instanceID = trombonePlaceholder.InstanceID;
-
-			Tromboner tromboner = new(trombonerGameObject, trombonePlaceholder);
-
-			var customPuppetTrait = trombonerGameObject.AddComponent<CustomPuppetController>();
-			customPuppetTrait.Tromboner = tromboner;
-
-			tromboner.controller.setTromboneTex(trombonePlaceholder.TromboneSkin == TromboneSkin.DoNotOverride ? instance.textureindex : (int)trombonePlaceholder.TromboneSkin);
-
-			if (GlobalVariables.localsave.cardcollectionstatus[36] > 9)
-			{
-				tromboner.controller.show_rainbow = true;
-			}
-		}
-
-		// handle foreground objects
+	    // handle foreground objects
 		var fgholder = bg.transform.GetChild(1);
 		while (fgholder.childCount < 8)
 		{
@@ -113,6 +55,66 @@ public class BackgroundHelper
             QualitySettings.shadows = ShadowQuality.All;
             QualitySettings.shadowDistance = 100;
         }
+    }
+
+    public static void SetUpPuppets(BGController controller, GameObject bg)
+    {
+	    var gameController = controller.gamecontroller;
+	    var puppetController = bg.AddComponent<BackgroundPuppetController>();
+
+	    // puppet handling
+		foreach(var trombonePlaceholder in bg.GetComponentsInChildren<TrombonerPlaceholder>())
+        {
+			int trombonerIndex = trombonePlaceholder.TrombonerType == TrombonerType.DoNotOverride
+				? gameController.puppetnum
+				: (int) trombonePlaceholder.TrombonerType;
+
+			// this specific thing could cause problems later but it's fine for now.
+			trombonePlaceholder.transform.SetParent(bg.transform.GetChild(0));
+
+			foreach(Transform child in trombonePlaceholder.transform)
+            {
+				if (child != null) child.gameObject.SetActive(false);
+            }
+
+			var sub = new GameObject("RealizedTromboner");
+			sub.transform.SetParent(trombonePlaceholder.transform);
+			sub.transform.SetSiblingIndex(0);
+			sub.transform.localPosition = new Vector3(-0.7f, 0.45f, -1.25f);
+			sub.transform.localEulerAngles = new Vector3(0, 0f, 0f);
+			trombonePlaceholder.transform.Rotate(new Vector3(0f, 19f, 0f));
+			sub.transform.localScale = Vector3.one;
+
+			//handle male tromboners being slightly shorter
+			if(trombonerIndex > 3 && trombonerIndex != 8) sub.transform.localPosition = new Vector3(-0.7f, 0.35f, -1.25f);
+
+			var tromboneRefs = new GameObject("TromboneTextureRefs");
+			tromboneRefs.transform.SetParent(sub.transform);
+			tromboneRefs.transform.SetSiblingIndex(0);
+
+			var textureRefs = tromboneRefs.AddComponent<TromboneTextureRefs>();
+			// a bit of getchild action to mirror game behaviour
+			textureRefs.trombmaterials = gameController.modelparent.transform.GetChild(0)
+				.GetComponent<TromboneTextureRefs>().trombmaterials;
+
+			// Copy the tromboners in
+			var trombonerGameObject = Object.Instantiate(gameController.playermodels[trombonerIndex], sub.transform, true);
+			trombonerGameObject.transform.localScale = Vector3.one;
+
+			Tromboner tromboner = new(trombonerGameObject, trombonePlaceholder);
+
+			// Store tromboners for later
+			var customPuppetTrait = trombonerGameObject.AddComponent<CustomPuppetController>();
+			customPuppetTrait.Tromboner = tromboner;
+			puppetController.Tromboners.Add(tromboner);
+
+			tromboner.controller.setTromboneTex(trombonePlaceholder.TromboneSkin == TromboneSkin.DoNotOverride ? gameController.textureindex : (int)trombonePlaceholder.TromboneSkin);
+
+			if (GlobalVariables.localsave.cardcollectionstatus[36] > 9)
+			{
+				tromboner.controller.show_rainbow = true;
+			}
+		}
     }
 
     public static void DisableBackground(GameObject bg)

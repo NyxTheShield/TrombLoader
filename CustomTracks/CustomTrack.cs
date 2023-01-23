@@ -220,6 +220,11 @@ public class CustomTrack : TromboneTrack
             {
                 BackgroundHelper.ApplyImage(bg, imagePath);
             }
+            else
+            {
+                // Set up tromboners for trombackgrounds
+                BackgroundHelper.SetUpPuppets(controller, bg);
+            }
 
             controller.tickontempo = false;
 

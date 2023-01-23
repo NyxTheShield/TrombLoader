@@ -12,11 +12,9 @@ namespace TrombLoader.Patch
     {
         static void DoStartSong(GameController controller, float delay)
         {
-            var puppetControllers = controller.bgholder.GetComponentsInChildren<HumanPuppetController>();
-            foreach (var pc in puppetControllers)
-            {
-                LeanTween.scaleY(pc.gameObject, 1f, 0.5f).setEaseOutBounce().setDelay(delay);
-            }
+            var bg = controller.bgcontroller.fullbgobject;
+            var puppetController = bg.GetComponent<BackgroundPuppetController>();
+            if (puppetController != null) puppetController.StartSong(delay);
         }
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -38,11 +36,8 @@ namespace TrombLoader.Patch
     {
         static void DoStartDance(GameController controller, float num)
         {
-            var puppetControllers = controller.bgholder.GetComponentsInChildren<HumanPuppetController>();
-            foreach (var pc in puppetControllers)
-            {
-                pc.startPuppetBob(num);
-            }
+            var puppetController = controller.bgcontroller.fullbgobject.GetComponent<BackgroundPuppetController>();
+            if (puppetController != null) puppetController.StartPuppetBob(num);
         }
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -67,12 +62,8 @@ namespace TrombLoader.Patch
 
         static void DoPuppetControl(GameController controller, float vp, float vibratoAmount)
         {
-            var puppetControllers = controller.bgholder.GetComponentsInChildren<HumanPuppetController>();
-            foreach (var pc in puppetControllers)
-            {
-                pc.doPuppetControl(vp);
-                pc.vibrato = vibratoAmount;
-            }
+            var puppetController = controller.bgcontroller.fullbgobject.GetComponent<BackgroundPuppetController>();
+            if (puppetController != null) puppetController.DoPuppetControl(vp, vibratoAmount);
         }
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -98,12 +89,8 @@ namespace TrombLoader.Patch
     {
         static void Postfix(GameController __instance, bool hasbreath)
         {
-            var puppetControllers = __instance.bgholder.GetComponentsInChildren<HumanPuppetController>();
-            foreach (var pc in puppetControllers)
-            {
-                pc.outofbreath = hasbreath;
-                pc.applyFaceTex();
-            }
+            var puppetController = __instance.bgcontroller.fullbgobject.GetComponent<BackgroundPuppetController>();
+            if (puppetController != null) puppetController.SetPuppetBreath(hasbreath);
         }
     }
 
@@ -113,12 +100,8 @@ namespace TrombLoader.Patch
     {
         static void Postfix(GameController __instance, bool shake)
         {
-            var puppetControllers = __instance.bgholder.GetComponentsInChildren<HumanPuppetController>();
-            foreach (var pc in puppetControllers)
-            {
-                pc.shaking = shake;
-                pc.applyFaceTex();
-            }
+            var puppetController = __instance.bgcontroller.fullbgobject.GetComponent<BackgroundPuppetController>();
+            if (puppetController != null) puppetController.SetPuppetShake(shake);
         }
     }
 
