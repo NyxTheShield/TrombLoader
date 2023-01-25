@@ -69,9 +69,6 @@ public class BackgroundHelper
 				? gameController.puppetnum
 				: (int) trombonePlaceholder.TrombonerType;
 
-			// this specific thing could cause problems later but it's fine for now.
-			trombonePlaceholder.transform.SetParent(bg.transform.GetChild(0));
-
 			foreach(Transform child in trombonePlaceholder.transform)
             {
 				if (child != null) child.gameObject.SetActive(false);
