@@ -5,6 +5,7 @@ using System.Linq;
 using BaboonAPI.Hooks.Tracks;
 using Newtonsoft.Json;
 using TrombLoader.Data;
+using HarmonyLib;
 using TrombLoader.Helpers;
 using UnityEngine;
 using UnityEngine.Video;
@@ -157,6 +158,33 @@ public class CustomTrack : TromboneTrack
             {
                 _backgroundBundle = AssetBundle.LoadFromFile(Path.Combine(songPath, "bg.trombackground"));
                 var bg = _backgroundBundle.LoadAsset<GameObject>("assets/_background.prefab");
+
+                // MacOS Shader Handling
+                // May need to be expanded to other platforms eventually, but for now only check for invalid shaders on mac
+                // TODO: Handle custom shaders and the bundle that TrombLoaderBackgroundProject will eventually export
+                if (Application.platform == RuntimePlatform.OSXPlayer)
+                {
+                    foreach (var renderer in bg.GetComponentsInChildren<Renderer>())
+                    {
+                        foreach (var material in renderer.sharedMaterials)
+                        {
+                            if (material == null || material.shader == null || material.shader.isSupported) continue;
+
+                            Shader shader;
+                            if (Plugin.Instance.ShaderAssets.TryGetValue(material.shader.name, out shader))
+                            {
+                                // Shader exists and is cached, so *hopefully* it's the same and can be swapped out with no ill effects.
+                                material.shader = shader;
+                            }
+                            else
+                            {
+                                // TODO: Handle more gracefully. Maybe replace with a default shader.
+                                Plugin.LogDebug($"Could not find shader on {renderer.gameObject.name} ({material.shader.name})");
+                            }
+                        }
+                    }
+                }
+
                 var managers = bg.GetComponentsInChildren<TromboneEventManager>();
                 foreach (var eventManager in managers)
                 {

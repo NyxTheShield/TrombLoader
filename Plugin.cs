@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using BaboonAPI.Hooks.Initializer;
 using BaboonAPI.Hooks.Tracks;
@@ -64,6 +65,54 @@ namespace TrombLoader
         public void LoadGameplayScene()
         {
             SceneManager.LoadSceneAsync("gameplay", LoadSceneMode.Single);
+        }
+
+        // Local shader asset caching for non-windows platforms
+        // Because assetbundles are built for windows, platforms like MacOS will have invalid shaders when it's a shader that's not already included in the game build.
+        // This can be somewhat fixed with a "master list" of default unity shaders, but custom shaders will still have to include something (todo)
+        private Dictionary<string, Shader> _shaderAssets = null;
+        public Dictionary<string, Shader> ShaderAssets { 
+            get {
+                if (_shaderAssets != null) return _shaderAssets;
+
+                var bundleName = "";
+                if (Application.platform == RuntimePlatform.WindowsPlayer)
+                {
+                    bundleName = "ShaderBundle_WIN64.DONOTDELETE";
+                    // unnecessary on windows for now. filename is just for testing and potential future compatibility.
+                }
+                if (Application.platform == RuntimePlatform.OSXPlayer)
+                {
+                    bundleName = "ShaderBundle_OSX.DONOTDELETE";
+                }
+
+                var bundlePath = Path.Combine(Path.GetDirectoryName(Instance.Info.Location), bundleName);
+
+                if (bundleName.IsNullOrWhiteSpace() || !File.Exists(bundlePath))
+                {
+                    _shaderAssets = new();
+                    return _shaderAssets;
+                }
+
+                // Each child of prefab contains a cube with a unique shader/material
+                // This dictionary structuring *May* have unintended consequences if somebody creates a shader with the exact same name as a base unity shader
+                // Unfortunately I couldn't find an easy way to get a cross-platform hash/ID, so names will have to suffice 
+                var bundle = AssetBundle.LoadFromFile(bundlePath);
+                var asset = bundle.LoadAsset("Assets/_Shaders.prefab") as GameObject;
+                Dictionary<string, Shader> shaderMap = new();
+
+                foreach (var renderer in asset.GetComponentsInChildren<Renderer>())
+                {
+                    var shader = renderer?.sharedMaterial?.shader;
+                    if (shader != null && !shaderMap.ContainsKey(shader.name))
+                    {
+                        shaderMap.Add(shader.name, shader);
+                    }
+                }
+
+                _shaderAssets = shaderMap;
+                return _shaderAssets;
+            }
         }
 
         #region logging
