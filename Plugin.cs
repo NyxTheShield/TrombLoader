@@ -106,7 +106,7 @@ namespace TrombLoader
         
         public IEnumerator Request(string path)
         {
-            path = "file://"Path.GetFullPath(path);
+            path = "file://" + Path.GetFullPath(path);
             var www = new WWW(path);
  
             while (!www.isDone)
