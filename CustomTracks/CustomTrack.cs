@@ -164,7 +164,7 @@ public class CustomTrack : TromboneTrack
                 // TODO: Handle custom shaders and the bundle that TrombLoaderBackgroundProject will eventually export
                 if (Application.platform == RuntimePlatform.OSXPlayer)
                 {
-                    foreach (var renderer in bg.GetComponentsInChildren<Renderer>())
+                    foreach (var renderer in bg.GetComponentsInChildren<Renderer>(true))
                     {
                         foreach (var material in renderer.sharedMaterials)
                         {
