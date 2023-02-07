@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using BaboonAPI.Hooks.Tracks;
 using TrombLoader.Data;
 using TrombLoader.Helpers;
@@ -22,6 +23,42 @@ public class CustomBackground : AbstractBackground
     public override GameObject Load(BackgroundContext ctx)
     {
         var bg = Bundle.LoadAsset<GameObject>("assets/_background.prefab");
+
+        // MacOS Shader Handling
+        // May need to be expanded to other platforms eventually, but for now only check for invalid shaders on mac
+        if (Application.platform == RuntimePlatform.OSXPlayer)
+        {
+            Dictionary<string, Shader> shaderCache = Plugin.Instance.ShaderHelper.ShaderCache;
+
+            // bundle auto-built in TrombLoaderBackgroundProject for custom shaders
+            // platform is null because we want to load EVERY shader bundle with EVERY name
+            var songSpecificShaderCache = Plugin.Instance.ShaderHelper.LoadShaderBundleFromPath(_songPath, null);
+            foreach(var songSpecificShader in songSpecificShaderCache)
+            {
+                if(!shaderCache.ContainsKey(songSpecificShader.Key)) shaderCache.Add(songSpecificShader.Key, songSpecificShader.Value);
+            }
+
+            foreach (var renderer in bg.GetComponentsInChildren<Renderer>(true))
+            {
+                foreach (var material in renderer.sharedMaterials)
+                {
+                    if (material == null || material.shader == null || material.shader.isSupported) continue;
+
+                    Shader shader;
+                    if (shaderCache.TryGetValue(material.shader.name, out shader))
+                    {
+                        // Shader exists and is cached, so *hopefully* it's the same and can be swapped out with no ill effects.
+                        material.shader = shader;
+                    }
+                    else
+                    {
+                        // TODO: Handle more gracefully. Maybe replace with a default shader.
+                        Plugin.LogDebug($"Could not find shader on {renderer.gameObject.name} ({material.shader.name})");
+                    }
+                }
+            }
+        }
+
         var managers = bg.GetComponentsInChildren<TromboneEventManager>();
         foreach (var eventManager in managers)
         {
