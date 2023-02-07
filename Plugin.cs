@@ -41,7 +41,7 @@ namespace TrombLoader
         //Load AudioClip
         public IEnumerator GetAudioClip(string path, Action callback = null)
         {
-            path = "file:\\\\" + Path.GetFullPath(path);
+            path = "file://" + Path.GetFullPath(path);
             UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.OGGVORBIS);
             ((DownloadHandlerAudioClip)www.downloadHandler).streamAudio = true;
             yield return www.SendWebRequest();
@@ -60,7 +60,7 @@ namespace TrombLoader
         
         public IEnumerator GetAudioClipSync(string path, Action callback = null)
         {
-            path = "file:\\\\" + Path.GetFullPath(path);
+            path = "file://" + Path.GetFullPath(path);
             UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.OGGVORBIS);
             ((DownloadHandlerAudioClip)www.downloadHandler).streamAudio = true;
             yield return www.SendWebRequest();
@@ -83,7 +83,7 @@ namespace TrombLoader
           
         public IEnumerator GetSpriteFromPath(string path)
         {   
-            path = "file:\\\\" + Path.GetFullPath(path);
+            path = "file://" + Path.GetFullPath(path);
             LogDebug($"Web Request Texture: {path}");
             UnityWebRequest www = UnityWebRequestTexture.GetTexture(path);
             yield return www.SendWebRequest();
@@ -106,7 +106,7 @@ namespace TrombLoader
         
         public IEnumerator Request(string path)
         {
-            path = "file:\\\\"+Path.GetFullPath(path);
+            path = "file://" + Path.GetFullPath(path);
             var www = new WWW(path);
  
             while (!www.isDone)
