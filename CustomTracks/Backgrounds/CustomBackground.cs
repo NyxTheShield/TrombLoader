@@ -32,10 +32,17 @@ public class CustomBackground : AbstractBackground
 
             // bundle auto-built in TrombLoaderBackgroundProject for custom shaders
             // platform is null because we want to load EVERY shader bundle with EVERY name
+            // TODO: cache this inbetween song runs
             var songSpecificShaderCache = Plugin.Instance.ShaderHelper.LoadShaderBundleFromPath(_songPath, null);
             foreach(var songSpecificShader in songSpecificShaderCache)
             {
+                // shaders in the bundle should actually overwrite the global shaders temporarily, just in case it's a modified version.
+
+                // for backgrounds that don't supply a custom macos shader file but still have custom shaders (eg, legacy songs),
+                // the absolute endgame would be to have a "valve steam deck shader cache" type service where recompiled shaders can be automatically downloaded
+                // however, it is debatable if it is worth developing this soley for the few legacy songs with custom shaders
                 if(!shaderCache.ContainsKey(songSpecificShader.Key)) shaderCache.Add(songSpecificShader.Key, songSpecificShader.Value);
+                else shaderCache[songSpecificShader.Key] = songSpecificShader.Value;
             }
 
             foreach (var renderer in bg.GetComponentsInChildren<Renderer>(true))

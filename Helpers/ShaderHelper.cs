@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace TrombLoader.Helpers
@@ -24,7 +25,7 @@ namespace TrombLoader.Helpers
         {
             // more robust "assetbundle platform detection" could be useful in the future
             Dictionary<string, Shader> shaderMap = new();
-            List<string> shaderBundleFileExtensions = new() { ".DONOTDELETE", ".shaderbundle", ".shaders" };
+            List<string> shaderBundleFileExtensions = new() { "*.DONOTDELETE", "*.shaderbundle", "*.shaders" };
             List<string> bundlePaths = new();
 
             // shader bundle loading is only necessary on mac for now.
@@ -33,9 +34,9 @@ namespace TrombLoader.Helpers
             {
                 foreach(string fileExtension in shaderBundleFileExtensions)
                 {
-                    var files = Directory.GetFiles(path, fileExtension, SearchOption.TopDirectoryOnly);
+                    var files = Directory.GetFiles(Path.GetDirectoryName(path), fileExtension, SearchOption.TopDirectoryOnly);
                     foreach(var file in files) {
-                        if((file.Contains("_MACOS") || file.Contains("_OSX")) && !bundlePaths.Contains(file)) bundlePaths.Add(file);
+                        if((file.ToLower().Contains("macos") || file.ToLower().Contains("osx")) && !bundlePaths.Contains(file)) bundlePaths.Add(file);
                     }
                 }
             }
@@ -43,7 +44,7 @@ namespace TrombLoader.Helpers
             {
                 foreach (string fileExtension in shaderBundleFileExtensions)
                 {
-                    var files = Directory.GetFiles(path, fileExtension, SearchOption.TopDirectoryOnly);
+                    var files = Directory.GetFiles(Path.GetDirectoryName(path), fileExtension, SearchOption.TopDirectoryOnly);
                     foreach (var file in files)
                     {
                         if (!bundlePaths.Contains(file)) bundlePaths.Add(file);
@@ -69,6 +70,8 @@ namespace TrombLoader.Helpers
                         shaderMap.Add(shader.name, shader);
                     }
                 }
+
+                bundle.Unload(false);
             }
 
             return shaderMap;
