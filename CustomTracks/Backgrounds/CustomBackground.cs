@@ -28,34 +28,50 @@ public class CustomBackground : AbstractBackground
         // May need to be expanded to other platforms eventually, but for now only check for invalid shaders on mac
         if (Application.platform == RuntimePlatform.OSXPlayer)
         {
-            Dictionary<string, Shader> shaderCache = Plugin.Instance.ShaderHelper.ShaderCache;
+            // first add base game shaders, which should NOT be overwritten by shadercache shaders
+            Dictionary<string, Shader> shaderCache = Plugin.Instance.ShaderHelper.BaseGameShaderCache;
+
+            foreach (var cachedShader in Plugin.Instance.ShaderHelper.ShaderCache)
+            {
+                if (!shaderCache.ContainsKey(cachedShader.Key)) shaderCache.Add(cachedShader.Key, cachedShader.Value);
+            }
 
             // bundle auto-built in TrombLoaderBackgroundProject for custom shaders
             // platform is null because we want to load EVERY shader bundle with EVERY name
             // TODO: cache this inbetween song runs
-            var songSpecificShaderCache = Plugin.Instance.ShaderHelper.LoadShaderBundleFromPath(_songPath, null);
-            foreach(var songSpecificShader in songSpecificShaderCache)
+            var songSpecificShaderCache = Plugin.Instance.ShaderHelper.LoadShaderBundleFromPath(_songPath + "/", null);
+
+            foreach (var songSpecificShader in songSpecificShaderCache)
             {
-                // shaders in the bundle should actually overwrite the global shaders temporarily, just in case it's a modified version.
+                // shaders in the bundle should actually overwrite the other shaders temporarily, just in case it's a modified version.
 
                 // for backgrounds that don't supply a custom macos shader file but still have custom shaders (eg, legacy songs),
                 // the absolute endgame would be to have a "valve steam deck shader cache" type service where recompiled shaders can be automatically downloaded
                 // however, it is debatable if it is worth developing this soley for the few legacy songs with custom shaders
-                if(!shaderCache.ContainsKey(songSpecificShader.Key)) shaderCache.Add(songSpecificShader.Key, songSpecificShader.Value);
-                else shaderCache[songSpecificShader.Key] = songSpecificShader.Value;
+                if (!shaderCache.ContainsKey(songSpecificShader.Key)) shaderCache.Add(songSpecificShader.Key, songSpecificShader.Value);
+                else
+                {
+                    shaderCache.Remove(songSpecificShader.Key);
+                    shaderCache.Add(songSpecificShader.Key, songSpecificShader.Value);
+                }
             }
 
             foreach (var renderer in bg.GetComponentsInChildren<Renderer>(true))
             {
-                foreach (var material in renderer.sharedMaterials)
+                foreach (var material in renderer.materials)
                 {
-                    if (material == null || material.shader == null || material.shader.isSupported) continue;
+                    if (material == null || material.shader == null) continue;
+
+                    // FIRST: check if the shader is in base game. Normally if it uses base game, everything is good, the shader is NOT broken.
+                    // Unfortunately this is wildly inconsistent, and the only shader that seems to consistently work is Standard
+                    // This does need a closer look if somebody can come up with a list of shaders that always deserialize properly, as switching shaders on a material is fairly expensive
+                    if (material.shader.name == "Standard") continue;
 
                     Shader shader;
                     if (shaderCache.TryGetValue(material.shader.name, out shader))
                     {
-                        // Shader exists and is cached, so *hopefully* it's the same and can be swapped out with no ill effects.
                         material.shader = shader;
+                        Plugin.LogDebug($"Replacing shader on {renderer.gameObject.name} ({shader.name})");
                     }
                     else
                     {
