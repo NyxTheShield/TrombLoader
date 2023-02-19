@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BaboonAPI.Hooks.Tracks;
@@ -21,7 +22,7 @@ public class TrackLoader: TrackRegistrationEvent.Listener
 
         foreach (var songFolder in songs)
         {
-            var chartPath = songFolder + "/" + Globals.defaultChartName;
+            var chartPath = Path.Combine(songFolder, Globals.defaultChartName);
             if (!File.Exists(chartPath)) continue;
 
             using var stream = File.OpenText(chartPath);
@@ -32,9 +33,10 @@ public class TrackLoader: TrackRegistrationEvent.Listener
             {
                 customLevel = _serializer.Deserialize<CustomTrack>(reader);
             }
-            catch
+            catch (Exception exc)
             {
                 Plugin.LogWarning($"Unable to deserialize JSON of custom chart: {chartPath}");
+                Plugin.LogWarning(exc.Message);
                 continue;
             }
 

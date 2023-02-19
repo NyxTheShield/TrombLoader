@@ -21,11 +21,11 @@ public class CustomTrack : TromboneTrack
     public string description;
     public float endpoint;
 
-    [JsonProperty("year")] private int yearInt;
+    [JsonProperty("year")] private int _year;
+    [JsonProperty("tempo")] private float _tempo;
 
     public string genre { get; }
     public int difficulty { get; }
-    public int tempo { get; }
     public string backgroundMovement { get; }
 
     // SavedLevel fields
@@ -40,14 +40,15 @@ public class CustomTrack : TromboneTrack
     [JsonIgnore] public string trackref => trackRef;
     [JsonIgnore] public string trackname_long => name;
     [JsonIgnore] public string trackname_short => shortName;
-    [JsonIgnore] public string year => yearInt.ToString();
+    [JsonIgnore] public string year => _year.ToString();
     [JsonIgnore] public string artist => author;
     [JsonIgnore] public string desc => description;
-    [JsonIgnore] public int length => Mathf.FloorToInt(endpoint / (tempo / 60f));
+    [JsonIgnore] public int tempo => (int) _tempo;
+    [JsonIgnore] public int length => Mathf.FloorToInt(endpoint / (_tempo / 60f));
 
     [JsonConstructor]
     public CustomTrack(string trackRef, string name, string shortName, string author, string description, float endpoint,
-        int year, string genre, int difficulty, int tempo, string backgroundMovement, int savednotespacing, int timesig,
+        int year, string genre, int difficulty, float tempo, string backgroundMovement, int savednotespacing, int timesig,
         List<Lyric> lyrics, float[] note_color_start, float[] note_color_end, float[][] notes, float[][] bgdata)
     {
         this.trackRef = trackRef;
@@ -56,10 +57,10 @@ public class CustomTrack : TromboneTrack
         this.author = author;
         this.description = description;
         this.endpoint = endpoint;
-        this.yearInt = year;
+        this._year = year;
         this.genre = genre;
         this.difficulty = difficulty;
-        this.tempo = tempo;
+        this._tempo = tempo;
         this.backgroundMovement = backgroundMovement ?? "none";
         this.savednotespacing = savednotespacing;
         this.timesig = timesig;
@@ -96,7 +97,7 @@ public class CustomTrack : TromboneTrack
             note_color_start = note_color_start,
             note_color_end = note_color_end,
             savednotespacing = savednotespacing,
-            tempo = tempo,
+            tempo = _tempo,
             timesig = timesig
         };
 
