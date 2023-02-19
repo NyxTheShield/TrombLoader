@@ -1,0 +1,10 @@
+{
+  "name": "TrombLoader",
+  "description": "Trombone Champ Custom Chart Loader.",
+  "version_number": "2.0.0",
+  "dependencies": [
+    "BepInEx-BepInExPack_TromboneChamp-5.4.21",
+    "TromboneChamps-BaboonAPI-2.0.6"
+  ],
+  "website_url": "https://github.com/NyxTheShield/TrombLoader"
+}

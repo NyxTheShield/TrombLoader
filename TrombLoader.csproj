@@ -19,8 +19,20 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="TromboneChamp.GameLibs" Version="1.9.0" />
-        <PackageReference Include="TromboneChamp.BaboonAPI" Version="2.0.3" />
+        <PackageReference Include="TromboneChamp.GameLibs" Version="1.9.3" />
+        <PackageReference Include="TromboneChamp.BaboonAPI" Version="2.0.6" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
+
+    <ItemGroup>
+        <ThunderstoreAssets Include="$(SolutionDir)thunderstore\*.*" />
+    </ItemGroup>
+
+    <Target Name="ThunderstoreZip" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+        <Delete Files="$(OutDir)thunderstore" />
+        <Delete Files="$(OutDir)$(ProjectName)-thunderstore.zip" />
+        <Copy SourceFiles="@(ThunderstoreAssets)" DestinationFolder="$(OutDir)thunderstore" />
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(OutDir)thunderstore/BepInEx/plugins" />
+        <ZipDirectory DestinationFile="$(OutDir)$(ProjectName)-thunderstore.zip" SourceDirectory="$(OutDir)thunderstore" />
+    </Target>
 </Project>

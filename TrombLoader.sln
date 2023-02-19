@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrombLoader", "TrombLoader.csproj", "{31395BA8-67C3-47AF-8B3F-3B7A13D5E176}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{31395BA8-67C3-47AF-8B3F-3B7A13D5E176}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31395BA8-67C3-47AF-8B3F-3B7A13D5E176}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31395BA8-67C3-47AF-8B3F-3B7A13D5E176}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31395BA8-67C3-47AF-8B3F-3B7A13D5E176}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
