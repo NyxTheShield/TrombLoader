@@ -23,7 +23,5 @@ Launch Trombone Champ and enjoy your new custom songs!
 To get started making your own custom charts, check out the related [Midi2TromboneChamp](https://github.com/NyxTheShield/Midi2TromboneChamp) project for more.
 
 ## Developer Guide
-- Change YourTromboneChampInstallationPath in Trombloader.csproj
-- Download [NStrip](https://github.com/BepInEx/NStrip/releases/latest)
-- Make the game file methods public: `./NStrip -p <installation_location>/TromboneChamp_Data/Managed/Assembly.CSharp.dll`
+
 - Build: `dotnet build`

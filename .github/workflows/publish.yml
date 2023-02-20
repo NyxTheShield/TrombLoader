@@ -1,0 +1,16 @@
+name: Publish to NuGet
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0'
+      - run: dotnet build -c Release
+      - run: dotnet nuget push bin/Release/*.nupkg -k ${{ secrets.NUGET_TOKEN }} -s https://api.nuget.org/v3/index.json
