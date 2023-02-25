@@ -12,6 +12,9 @@ namespace TrombLoader.CustomTracks;
 [Serializable]
 public class CustomTrack : TromboneTrack
 {
+    /// <summary>
+    ///  Folder path that this track can be found at
+    /// </summary>
     [JsonIgnore] public string folderPath { get; set; }
 
     public string trackRef;
