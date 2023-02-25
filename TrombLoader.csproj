@@ -3,10 +3,31 @@
         <TargetFramework>net472</TargetFramework>
         <AssemblyName>TrombLoader</AssemblyName>
         <Description>Trombone Champ Custom Chart Loader</Description>
-        <Version>2.0.0</Version>
+        <Version>2.0.0-rc.1</Version>
+        <BepInExPluginVersion>2.0.0</BepInExPluginVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
+        
+        <PackageId>TromboneChamp.TrombLoader</PackageId>
+        <Authors>NyxTheShield, legoandmars, offbeatwitch</Authors>
+        <Company>TromboneChamps</Company>
+        <PackageTags>Trombone Champ</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/NyxTheShield/TrombLoader</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <DefaultLanguage>en</DefaultLanguage>
     </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <None Include="$(SolutionDir)thunderstore\README.md" Pack="true" PackagePath="\" />
+        <None Include="$(SolutionDir)thunderstore\icon.png" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
