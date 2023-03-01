@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using BaboonAPI.Hooks.Tracks;
 using BepInEx;
-using UnityEngine;
+using TrombLoader.CustomTracks;
 
 namespace TrombLoader.Helpers
 {
@@ -14,13 +16,21 @@ namespace TrombLoader.Helpers
             return Path.Combine(Paths.BepInExRootPath, "CustomSongs/");
         }
 
-        //If there is no chart named trackReference.tmb in the streamingAssets/leveldata folder, then we are loading a custom chart
+        /// <summary>
+        ///  Check if a track was loaded by TrombLoader
+        /// </summary>
+        /// <param name="trackReference">Track reference to check</param>
+        /// <returns>True if this is a TrombLoader-provided track, false otherwise</returns>
         public static bool IsCustomTrack(string trackReference)
         {
-            return !File.Exists(Path.Combine(Application.dataPath, "StreamingAssets", "leveldata", $"{trackReference}.tmb"));
+            var track = TrackLookup.lookup(trackReference);
+            return track is CustomTrack;
         }
 
+        [Obsolete("No longer populated, use BaboonAPI to look up the track and cast to CustomTrack instead")]
         public static Dictionary<string, string> ChartFolders = new();
+        
+        [Obsolete("No longer controlled by TrombLoader")]
         public static bool SaveCreationEnabled = true;
     }
 }
