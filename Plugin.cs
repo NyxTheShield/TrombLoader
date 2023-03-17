@@ -18,12 +18,13 @@ using UnityEngine.SceneManagement;
 namespace TrombLoader
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInDependency("ch.offbeatwit.baboonapi.plugin", "2.0.0")]
     public class Plugin : BaseUnityPlugin
     {
         public static Plugin Instance;
         public ShaderHelper ShaderHelper;
         public ConfigEntry<int> beatsToShow;
-        
+
         private Harmony _harmony = new(PluginInfo.PLUGIN_GUID);
 
         private void Awake()
@@ -53,7 +54,7 @@ namespace TrombLoader
             yield return www.SendWebRequest();
             while (!www.isDone)
                 yield return null;
-            
+
             if (www.isNetworkError || www.isHttpError)
             {
                 yield return www.error;
