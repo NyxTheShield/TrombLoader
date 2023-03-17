@@ -15,7 +15,9 @@ public class CustomTrack : TromboneTrack
     /// <summary>
     ///  Folder path that this track can be found at
     /// </summary>
-    [JsonIgnore] public string folderPath { get; set; }
+    [JsonIgnore] public string folderPath { get; internal set; }
+
+    [JsonIgnore] internal TrackLoader Loader { get; set; }
 
     public string trackRef;
     public string name;
@@ -90,6 +92,11 @@ public class CustomTrack : TromboneTrack
 
     public SavedLevel LoadChart()
     {
+        if (Loader?.ShouldReloadChart() == true)
+        {
+            return Loader.ReloadTrack(this);
+        }
+
         var level = new SavedLevel
         {
             savedleveldata = new List<float[]>(notes),

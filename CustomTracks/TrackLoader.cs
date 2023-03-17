@@ -12,6 +12,23 @@ public class TrackLoader: TrackRegistrationEvent.Listener
 {
     private JsonSerializer _serializer = new();
 
+    public SavedLevel ReloadTrack(CustomTrack existing)
+    {
+        var chartPath = Path.Combine(existing.folderPath, Globals.defaultChartName);
+        using var stream = File.OpenText(chartPath);
+        using var reader = new JsonTextReader(stream);
+
+        var track = _serializer.Deserialize<CustomTrack>(reader);
+
+        // Avoid setting `track.Loader = this`, preventing a loop
+        return track?.LoadChart();
+    }
+
+    public bool ShouldReloadChart()
+    {
+        return Plugin.Instance.DeveloperMode.Value;
+    }
+
     public IEnumerable<TromboneTrack> OnRegisterTracks()
     {
         CreateMissingDirectories();
@@ -45,6 +62,7 @@ public class TrackLoader: TrackRegistrationEvent.Listener
             Plugin.LogDebug($"Found custom chart: {customLevel.trackref}");
 
             customLevel.folderPath = songFolder;
+            customLevel.Loader = this;
             yield return customLevel;
         }
     }
