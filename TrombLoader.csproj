@@ -3,7 +3,7 @@
         <TargetFramework>net472</TargetFramework>
         <AssemblyName>TrombLoader</AssemblyName>
         <Description>Trombone Champ Custom Chart Loader</Description>
-        <Version>2.0.0-rc.1</Version>
+        <Version>2.0.0-rc.2</Version>
         <BepInExPluginVersion>2.0.0</BepInExPluginVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
