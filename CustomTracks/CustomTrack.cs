@@ -26,14 +26,16 @@ public class CustomTrack : TromboneTrack
 
     [JsonProperty("year")] private int _year;
     [JsonProperty("tempo")] private float _tempo;
+    [JsonProperty("savednotespacing")] private float _savednotespacing;
+    [JsonProperty("timesig")] private float _timesig;
 
     public string genre { get; }
     public int difficulty { get; }
     public string backgroundMovement { get; }
 
     // SavedLevel fields
-    public int savednotespacing { get; }
-    public int timesig { get; }
+    [JsonIgnore] public int savednotespacing => (int) _savednotespacing;
+    [JsonIgnore] public int timesig => (int) _timesig;
     public List<Lyric> lyrics { get; }
     public float[] note_color_start { get; }
     public float[] note_color_end { get; }
@@ -51,7 +53,7 @@ public class CustomTrack : TromboneTrack
 
     [JsonConstructor]
     public CustomTrack(string trackRef, string name, string shortName, string author, string description, float endpoint,
-        int year, string genre, int difficulty, float tempo, string backgroundMovement, int savednotespacing, int timesig,
+        int year, string genre, int difficulty, float tempo, string backgroundMovement, float savednotespacing, float timesig,
         List<Lyric> lyrics, float[] note_color_start, float[] note_color_end, float[][] notes, float[][] bgdata)
     {
         this.trackRef = trackRef;
@@ -65,8 +67,8 @@ public class CustomTrack : TromboneTrack
         this.difficulty = difficulty;
         this._tempo = tempo;
         this.backgroundMovement = backgroundMovement ?? "none";
-        this.savednotespacing = savednotespacing;
-        this.timesig = timesig;
+        this._savednotespacing = savednotespacing;
+        this._timesig = timesig;
         this.lyrics = lyrics ?? new List<Lyric>();
         this.note_color_start = note_color_start ?? new[] { 1.0f, 0.21f, 0f };
         this.note_color_end = note_color_end ?? new[] { 1.0f, 0.8f, 0.3f };
