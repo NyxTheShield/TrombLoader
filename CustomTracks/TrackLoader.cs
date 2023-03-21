@@ -12,23 +12,6 @@ public class TrackLoader: TrackRegistrationEvent.Listener
 {
     private JsonSerializer _serializer = new();
 
-    public SavedLevel ReloadTrack(CustomTrack existing)
-    {
-        var chartPath = Path.Combine(existing.folderPath, Globals.defaultChartName);
-        using var stream = File.OpenText(chartPath);
-        using var reader = new JsonTextReader(stream);
-
-        var track = _serializer.Deserialize<CustomTrack>(reader);
-
-        // Avoid setting `track.Loader = this`, preventing a loop
-        return track?.LoadChart();
-    }
-
-    public bool ShouldReloadChart()
-    {
-        return Plugin.Instance.DeveloperMode.Value;
-    }
-
     public IEnumerable<TromboneTrack> OnRegisterTracks()
     {
         CreateMissingDirectories();
@@ -45,10 +28,10 @@ public class TrackLoader: TrackRegistrationEvent.Listener
             using var stream = File.OpenText(chartPath);
             using var reader = new JsonTextReader(stream);
 
-            CustomTrack customLevel;
-            try 
+            CustomTrackData customLevel;
+            try
             {
-                customLevel = _serializer.Deserialize<CustomTrack>(reader);
+                customLevel = _serializer.Deserialize<CustomTrackData>(reader);
             }
             catch (Exception exc)
             {
@@ -59,14 +42,28 @@ public class TrackLoader: TrackRegistrationEvent.Listener
 
             if (customLevel == null) continue;
 
-            Plugin.LogDebug($"Found custom chart: {customLevel.trackref}");
+            Plugin.LogDebug($"Found custom chart: {customLevel.trackRef}");
 
-            customLevel.folderPath = songFolder;
-            customLevel.Loader = this;
-            yield return customLevel;
+            yield return new CustomTrack(songFolder, customLevel, this);
         }
     }
-    
+
+    public SavedLevel ReloadTrack(CustomTrack existing)
+    {
+        var chartPath = Path.Combine(existing.folderPath, Globals.defaultChartName);
+        using var stream = File.OpenText(chartPath);
+        using var reader = new JsonTextReader(stream);
+
+        var track = _serializer.Deserialize<CustomTrackData>(reader);
+
+        return track?.ToSavedLevel();
+    }
+
+    public bool ShouldReloadChart()
+    {
+        return Plugin.Instance.DeveloperMode.Value;
+    }
+
     private static void CreateMissingDirectories()
     {
         //If the custom folder doesnt exist, create it
