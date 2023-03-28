@@ -20,6 +20,7 @@ public class TrackLoader: TrackRegistrationEvent.Listener
             .Concat(Directory.GetFiles(BepInEx.Paths.PluginPath, "song.tmb", SearchOption.AllDirectories))
             .Select(i => Path.GetDirectoryName(i));
 
+        var seen = new HashSet<string>();
         foreach (var songFolder in songs)
         {
             var chartPath = Path.Combine(songFolder, Globals.defaultChartName);
@@ -42,9 +43,17 @@ public class TrackLoader: TrackRegistrationEvent.Listener
 
             if (customLevel == null) continue;
 
-            Plugin.LogDebug($"Found custom chart: {customLevel.trackRef}");
+            if (seen.Add(customLevel.trackRef))
+            {
+                Plugin.LogDebug($"Found custom chart: {customLevel.trackRef}");
 
-            yield return new CustomTrack(songFolder, customLevel, this);
+                yield return new CustomTrack(songFolder, customLevel, this);
+            }
+            else
+            {
+                Plugin.LogWarning(
+                    $"Skipping folder {chartPath} as its trackref '{customLevel.trackRef}' was already loaded!");
+            }
         }
     }
 
