@@ -65,7 +65,6 @@ namespace TrombLoader
             }
             else 
             {
-                LogDebug("Loaded File:" + path);
                 callback?.Invoke();
                 yield return DownloadHandlerAudioClip.GetContent(www);
             }

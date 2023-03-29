@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
@@ -63,18 +64,30 @@ namespace TrombLoader.Patch
         static void DoPuppetControl(GameController controller, float vp, float vibratoAmount)
         {
             var puppetController = controller.bgcontroller.fullbgobject.GetComponent<BackgroundPuppetController>();
-            if (puppetController != null) puppetController.DoPuppetControl(vp, vibratoAmount);
+            // Multiply by 2 here to match basegame
+            if (puppetController != null) puppetController.DoPuppetControl(vp * 2f, vibratoAmount);
         }
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            return new CodeMatcher(instructions)
+            var matcher = new CodeMatcher(instructions)
                 .SearchForward(instruction => instruction.Calls(doPuppetControl_m))
-                .ThrowIfInvalid("Failed to find injection point in GameController#Update")
+                .ThrowIfInvalid("Failed to find injection point in GameController#Update");
+
+            // This is pretty fragile, but currently unavoidably so
+            // The Update method is so big it has a LOT of locals, and it's likely to be touched in updates that fiddle
+            // with basically anything in the game scene. The below is an attempt to at least avoid breaking silently
+            // in the face of game updates, which happened in 1.098.    -- obw 2023-03-24
+            // Find the ldloc that loads `num9`
+            var ldlocIns = matcher.InstructionAt(-3);
+            if (!ldlocIns.IsLdloc())
+                throw new InvalidOperationException("Failed to find ldloc in GameController#Update");
+
+            return matcher
                 .Advance(1) // Insert() inserts before, so bump 1 ahead
                 .InsertAndAdvance(
                     new CodeInstruction(OpCodes.Ldarg_0),
-                    new CodeInstruction(OpCodes.Ldloc_S, (byte) 14),
+                    new CodeInstruction(OpCodes.Ldloc_S, ldlocIns.operand),
                     new CodeInstruction(OpCodes.Ldarg_0),
                     CodeInstruction.LoadField(typeof(GameController), nameof(GameController.vibratoamt)),
                     CodeInstruction.Call(typeof(GameControllerPuppetUpdatePatch), nameof(DoPuppetControl))
