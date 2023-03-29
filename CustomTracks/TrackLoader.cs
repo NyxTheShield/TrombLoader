@@ -20,6 +20,7 @@ public class TrackLoader: TrackRegistrationEvent.Listener
             .Concat(Directory.GetFiles(BepInEx.Paths.PluginPath, "song.tmb", SearchOption.AllDirectories))
             .Select(i => Path.GetDirectoryName(i));
 
+        var seen = new HashSet<string>();
         foreach (var songFolder in songs)
         {
             var chartPath = Path.Combine(songFolder, Globals.defaultChartName);
@@ -28,10 +29,10 @@ public class TrackLoader: TrackRegistrationEvent.Listener
             using var stream = File.OpenText(chartPath);
             using var reader = new JsonTextReader(stream);
 
-            CustomTrack customLevel;
-            try 
+            CustomTrackData customLevel;
+            try
             {
-                customLevel = _serializer.Deserialize<CustomTrack>(reader);
+                customLevel = _serializer.Deserialize<CustomTrackData>(reader);
             }
             catch (Exception exc)
             {
@@ -42,13 +43,36 @@ public class TrackLoader: TrackRegistrationEvent.Listener
 
             if (customLevel == null) continue;
 
-            Plugin.LogDebug($"Found custom chart: {customLevel.trackref}");
+            if (seen.Add(customLevel.trackRef))
+            {
+                Plugin.LogDebug($"Found custom chart: {customLevel.trackRef}");
 
-            customLevel.folderPath = songFolder;
-            yield return customLevel;
+                yield return new CustomTrack(songFolder, customLevel, this);
+            }
+            else
+            {
+                Plugin.LogWarning(
+                    $"Skipping folder {chartPath} as its trackref '{customLevel.trackRef}' was already loaded!");
+            }
         }
     }
-    
+
+    public SavedLevel ReloadTrack(CustomTrack existing)
+    {
+        var chartPath = Path.Combine(existing.folderPath, Globals.defaultChartName);
+        using var stream = File.OpenText(chartPath);
+        using var reader = new JsonTextReader(stream);
+
+        var track = _serializer.Deserialize<CustomTrackData>(reader);
+
+        return track?.ToSavedLevel();
+    }
+
+    public bool ShouldReloadChart()
+    {
+        return Plugin.Instance.DeveloperMode.Value;
+    }
+
     private static void CreateMissingDirectories()
     {
         //If the custom folder doesnt exist, create it

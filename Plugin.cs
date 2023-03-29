@@ -18,18 +18,23 @@ using UnityEngine.SceneManagement;
 namespace TrombLoader
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInDependency("ch.offbeatwit.baboonapi.plugin", "2.0.0")]
     public class Plugin : BaseUnityPlugin
     {
         public static Plugin Instance;
         public ShaderHelper ShaderHelper;
+
         public ConfigEntry<int> beatsToShow;
-        
+        public ConfigEntry<bool> DeveloperMode;
+
         private Harmony _harmony = new(PluginInfo.PLUGIN_GUID);
 
         private void Awake()
         {
             var customFile = new ConfigFile(Path.Combine(Paths.ConfigPath, "TrombLoader.cfg"), true);
             beatsToShow = customFile.Bind("General", "Note Display Limit", 64, "The maximum amount of notes displayed on screen at once.");
+            DeveloperMode = customFile.Bind("Charting", "Developer Mode", false,
+                "When enabled, TrombLoader will re-read chart data from disk each time a track is loaded.");
 
             Instance = this;
             LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
@@ -53,7 +58,7 @@ namespace TrombLoader
             yield return www.SendWebRequest();
             while (!www.isDone)
                 yield return null;
-            
+
             if (www.isNetworkError || www.isHttpError)
             {
                 yield return www.error;
