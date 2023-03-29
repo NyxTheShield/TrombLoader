@@ -17,14 +17,14 @@ public class CustomTrackData
     public string genre;
     public int difficulty;
     public float tempo;
-    public string backgroundMovement;
+    public string backgroundMovement = "none";
     public int savednotespacing;
     public int timesig;
-    public List<Lyric> lyrics;
-    public float[] note_color_start;
-    public float[] note_color_end;
+    public List<Lyric> lyrics = new();
+    public float[] note_color_start = { 1.0f, 0.21f, 0f };
+    public float[] note_color_end = { 1.0f, 0.8f, 0.3f };
     public float[][] notes;
-    public float[][] bgdata;
+    public float[][] bgdata = {};
 
     public SavedLevel ToSavedLevel()
     {
